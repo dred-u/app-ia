@@ -10,6 +10,10 @@ import Register from './src/views/register';
 import Movies from './src/views/movies';
 import Favourites from './src/views/favourites';
 import Profile from './src/views/profile';
+import MovieDetails from './src/views/movieDetails';
+import GenreDetails from './src/views/genreDetails';
+import DirectorDetails from './src/views/directorDetails';
+
 import Pages_header from './src/components/pages-header';
 
 const Stack = createStackNavigator();
@@ -17,7 +21,7 @@ const Tab = createBottomTabNavigator();
 
 function MainStack() {
   return (
-    <Stack.Navigator initialRouteName="Navigation">
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
@@ -25,6 +29,9 @@ function MainStack() {
       <Stack.Screen name="Favourites" component={Favourites} options={{ headerShown: false }} />
       <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
       <Stack.Screen name="Navigation" component={Navigation} options={{ headerShown: false }} />
+      <Stack.Screen name="MovieDetails" component={MovieDetails} options={{ headerShown: false }} />
+      <Stack.Screen name="GenreDetails" component={GenreDetails} options={{ headerShown: false }} />
+      <Stack.Screen name="DirectorDetails" component={DirectorDetails} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
@@ -40,10 +47,10 @@ function Navigation() {
         title: 'CINEMATCH',
         headerTitleAlign: 'center',
         headerBackground: () => (
-          <ImageBackground source={require('./assets/lines-bot.webp')} style={{ backgroundColor: '#9A0315', width: '100%', height: '100%', }}></ImageBackground>
+          <ImageBackground source={require('./assets/lines-bot.webp')} style={{ backgroundColor: '#9A0315', width: '100%', height: '100%', }}/>
         ),
 
-        headerTitle: (props) => <Pages_header {...props} />,
+        headerTitle: () => <Pages_header/>,
 
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
@@ -88,7 +95,7 @@ function Navigation() {
         name="Movies"
         component={Movies}
         options={{
-          tabBarLabel: 'Peliculas',
+          tabBarLabel: 'Listas',
           tabBarIcon: ({ color, size }) => (
             <Icon name="movie-open" color={color} size={size} />
           ),
