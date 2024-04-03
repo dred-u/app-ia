@@ -125,3 +125,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+apiMovies/api/__pycache__
+apiMovies/django_api/__pycache__
+apiMovies/venv
