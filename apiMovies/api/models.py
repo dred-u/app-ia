@@ -30,11 +30,10 @@ class Productoras(models.Model):
     nombre = models.CharField(max_length=100)
     pais = models.CharField(max_length=50)
     logo = models.CharField(max_length=250)
-
 class Usuarios(models.Model):
     id_usuario = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=255)
 
 class Peliculas(models.Model):
