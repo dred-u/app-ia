@@ -56,10 +56,6 @@ class DirectoresView(viewsets.ModelViewSet):
     serializer_class = DirectorSerializer
     queryset = Directores.objects.all()
 
-class UsuariosView(viewsets.ModelViewSet):
-    serializer_class = UsuariosSerializer
-    queryset = Usuarios.objects.all()
-
 class RatingView(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
     queryset = Rating.objects.all()
