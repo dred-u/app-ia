@@ -1,79 +1,110 @@
-import { React, useEffect, useCallback } from 'react'
-import { useFonts } from 'expo-font';
-import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { React, useEffect, useState } from 'react'
+import { Platform, StyleSheet, View, Text, TextInput, Pressable } from 'react-native';
 import ContainerLogo from '../components/container-logo';
-
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
+import { useAuth } from "../authContext"
 
 export default function Register({ navigation }) {
 
-  const [fontsLoaded, fontError] = useFonts({
-    'OpenSans': require('../../assets/fonts/OpenSans-VariableFont_wdth,wght.ttf'),
+  //MANEJO DE PETICION DE REGISTRO
+  const { register, isAuthenticated, errors } = useAuth(); 
+  const [formErrors, setFormErrors] = useState({}); // Guardar errores
+  const [showErrors, setShowErrors] = useState(false);
+
+  const [formValues, setFormValues] = useState({
+    username: "",
+    email: "",
+    password: "",
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
-
-  const onSubmit = async () => {
-    navigation.navigate('Navigation')
+  const handleInputChange = (name, value) => {
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
   };
 
-  return (
+    //validar los campos antes de enviarlos
+    const isValidForm = () => {
+      const errors = {};
+    
+      if (!formValues.username) {
+        errors.username = '¡El nombre de usuario es requerido!';
+      }
+    
+      if (!formValues.email) {
+        errors.email = '¡El correo es requerido!';
+      }
+    
+      if (!formValues.password) {
+        errors.password = '¡La contraseña es requerida!';
+      } else if (formValues.password.length < 6) {
+        errors.password = '¡La contraseña debe ser mayor a 6 caracteres!';
+      }
+    
+      setFormErrors(errors);
+    
+      if (Object.keys(errors).length > 0) {
+        setShowErrors(true);
+        setTimeout(() => {
+          setShowErrors(false);
+        }, 2500);
+      }
+    
+      return Object.keys(errors).length === 0;
+    };
 
+    useEffect(() => {
+      if (isAuthenticated) navigation.navigate('Navigation') //Aqui se viaja a la pantalla de Inicio
+      setFormValues({
+        username: "",
+        email: "",
+        password: "",
+      });
+    },[isAuthenticated])
+  
+    const onSubmit = async () => {
+      if(isValidForm()){
+        register(formValues)
+      }
+    };
+
+  return (
     <View style={styles.container_body}>
       <ContainerLogo />
       <View style={styles.content}>
-
+        {
+          errors.map((error,i) => (<Text style = {styles.error_message} key={i}>
+            {error}    
+          </Text>))
+        }
         <View style={styles.text_subtitles}>
-
-        <Text style={{
-          fontSize: 40,
-          color: '#ffffff',
-          fontFamily: Platform.select({
-            android: 'OpenSans',
-            web: 'OpenSans'
-          }),
-          fontWeight: '800'
-        }}>
+        <Text style={{ fontSize: 40, color: '#ffffff', fontWeight: '800'}}>
           Registrarse
         </Text>
 
-        <Text style={{
-          top: 5,
-          fontSize: 15,
-          color: '#ffffff',
-          fontFamily: Platform.select({
-            android: 'OpenSans',
-            web: 'OpenSans'
-          }),
-        }}
-        >Por favor registrate para continuar
+        <Text style={{ top: 5, fontSize: 15, color: '#ffffff'}}>
+          Por favor registrate para continuar
         </Text>
-
         </View>
 
-        <View style={styles.text_inputs} >
-
+        <View style={styles.text_inputs}>
           <Text style={styles.label}>Nombre de usuario</Text>
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            value={formValues.username}
+            onChangeText={(text) => handleInputChange('username', text)}
           />
+          {showErrors ? <Text style={styles.validations}>{formErrors.username}</Text>: <Text></Text>}
 
           <Text style={styles.label}>Correo electrónico</Text>
           <TextInput
             style={styles.input}
             autoCapitalize="none"
-          />         
+            value={formValues.email}
+            onChangeText={(text) => handleInputChange('email', text)}
+          />       
+          {showErrors ? <Text style={styles.validations}>{formErrors.email}</Text>: <Text></Text>}  
 
           <Text style={styles.label}>Contraseña</Text>
 
@@ -81,21 +112,21 @@ export default function Register({ navigation }) {
             style={styles.input}
             autoCapitalize="none"
             secureTextEntry
+            value={formValues.password}
+            onChangeText={(text) => handleInputChange('password', text)}
           />
+          {showErrors ? <Text style={styles.validations}>{formErrors.password}</Text>: <Text></Text>}  
         </View>
 
-        <TouchableOpacity onPress={onSubmit}>
+        <Pressable onPress={onSubmit}>
           <Text style={styles.button}>Registrarse</Text>
-        </TouchableOpacity>
+        </Pressable>
 
       </View>
-
-
-        <TouchableOpacity style={{marginTop:10, flexDirection: 'row', justifyContent:'center'}} onPress={() => navigation.navigate('Login')}>
+        <Pressable style={{marginTop:10, flexDirection: 'row', justifyContent:'center'}} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.text_register}>¿Ya tienes una cuenta? </Text>
           <Text style={styles.link}>¡Inicia sesion!</Text>
-        </TouchableOpacity>
-      
+        </Pressable>  
     </View>
   );
 }
@@ -165,5 +196,12 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginTop: 10,
   },
+  validations:{
+    color:'red', 
+    fontSize:16, 
+    display: "flex",
+    flexDirection: "row", // Establece la dirección a "row"
+    flexWrap: "wrap",
+},
 
 })

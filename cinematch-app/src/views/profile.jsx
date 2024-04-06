@@ -1,8 +1,20 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import {React, useEffect} from 'react'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useAuth } from '../authContext';
 
-export default function Profile() {
+export default function Profile({navigation}) {
+  const { isAuthenticated, logout, user} = useAuth(); 
+
+  useEffect(() => {
+      navigation.navigate('Login')
+  },[isAuthenticated])
+
+  const onSubmit = async () => {
+    logout();
+
+  };
+
   return (
     <View style={styles.container_body}>
       <View style={styles.fy_space}>
@@ -11,9 +23,17 @@ export default function Profile() {
       </View>
 
       <View style={styles.profile_content}>
-        <Text style={styles.username}>Didier</Text>
-        <Text style={styles.email}>urbina.didier.isw@unipolidgo.edu.mx</Text>
+      <Text style={styles.username}>{user.username}</Text>
+      <Text style={styles.email}>{user.email}</Text>
       </View>
+
+      <View style={styles.logoutButton}>
+        <Pressable onPress={onSubmit}>
+          <Text style={styles.textLogout}>Cerrar sesión </Text>
+        </Pressable>
+        <Icon name='logout' color='#ffffff' size={30} />
+      </View>
+
     </View>
   )
 }
@@ -53,18 +73,25 @@ const styles = StyleSheet.create({
     borderColor: '#A2A9B2',
     borderBottomWidth: 1,
   },
-
   username:{
     fontSize: 35,
     color: '#ffffff',
     fontWeight: 'bold'
   },
-
   email: {
     marginTop: 5,
     fontSize: 20,
     color: '#ffffff'
-  }
-
-
+  },
+  logoutButton: {
+    padding: 10,
+    marginTop: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  textLogout: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });

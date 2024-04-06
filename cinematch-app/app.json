@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "cinematch-app",
-    "slug": "cinematch-app",
+    "name": "Cinematch",
+    "slug": "Cinematch",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/cinematch-logo.png",
@@ -36,6 +36,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "debug": {
+        "networking": {
+          "debugger": true
+        }
       }
     },
     "web": {

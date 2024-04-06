@@ -3,7 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ImageBackground } from 'react-native';
+import { AuthProvider } from './src/authContext';
 
+import Welcome from './src/views/welcome';
 import Login from './src/views/login';
 import HomeScreen from './src/views/home';
 import Register from './src/views/register';
@@ -21,7 +23,8 @@ const Tab = createBottomTabNavigator();
 
 function MainStack() {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
@@ -131,9 +134,11 @@ function Navigation() {
 
 export default function App() {
   return (
+    <AuthProvider>
     <NavigationContainer>
       <MainStack />
     </NavigationContainer>
+    </AuthProvider>
   );
 }
 
