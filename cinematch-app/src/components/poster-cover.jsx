@@ -26,7 +26,7 @@ export default function MoviePoster({ object }) {
 
     return (
         <TouchableOpacity onPress={handlePress}>
-            <ImageBackground source={{ uri: `https://image.tmdb.org/t/p/original${object.img}` }} style={{
+            <ImageBackground source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={{
                 ...styles.poster,
                 width: Platform.select({
                     android: 85.71,
@@ -38,8 +38,8 @@ export default function MoviePoster({ object }) {
                 }),
             }}>
                 <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,1)']} style={{ paddingTop: 15 }}>
-                    <Text style={styles.title} numberOfLines={2}>{object.title}</Text>
-                    <Text style={styles.subtitle}>{object.genre}</Text>
+                    <Text style={styles.title} numberOfLines={2}>{object.titulo}</Text>
+                    <Text style={styles.subtitle}>{object.genero}</Text>
                 </LinearGradient>
             </ImageBackground>
         </TouchableOpacity>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Movies_page from '../components/movies-pages/movies-page';
 import Directors_page from '../components/movies-pages/directors-page';
 import Producer_page from '../components/movies-pages/producer-page';
 import Genre_page from '../components/movies-pages/genres-page';
+
+import { useMovies } from '../moviesContext';
 
 import { items2, directoresItems, producersItems } from '../components/carousel-elements';
 
@@ -11,9 +13,11 @@ import { items2, directoresItems, producersItems } from '../components/carousel-
 export default function Movies() {
   const [currentPage, setCurrentPage] = useState('Movies');
 
+  const { movies, getMovieList } = useMovies(); 
+
   const renderPage = () => {
     if (currentPage === 'Movies') {
-      return <Movies_page list={items2} />;
+      return <Movies_page list={movies} />;
     } else if (currentPage === 'Directors') {
       return <Directors_page list={directoresItems} />;
     } else if (currentPage === 'Producers') {
@@ -30,29 +34,29 @@ export default function Movies() {
       </View>
 
       <View style={styles.button_container}>
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Movies' && styles.active_button]}
           onPress={() => setCurrentPage('Movies')}>
           <Text style={styles.button_text}>Películas</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Genres' && styles.active_button]}
           onPress={() => setCurrentPage('Genres')}>
           <Text style={styles.button_text}>Generos</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Directors' && styles.active_button]}
           onPress={() => setCurrentPage('Directors')}>
           <Text style={styles.button_text}>Directores</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Producers' && styles.active_button]}
           onPress={() => setCurrentPage('Producers')}>
           <Text style={styles.button_text}>Productoras</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {renderPage()}

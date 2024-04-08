@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ImageBackground } from 'react-native';
 import { AuthProvider } from './src/authContext';
+import { MoviesProvider } from './src/moviesContext';
 
 import Welcome from './src/views/welcome';
 import Login from './src/views/login';
@@ -50,10 +51,10 @@ function Navigation() {
         title: 'CINEMATCH',
         headerTitleAlign: 'center',
         headerBackground: () => (
-          <ImageBackground source={require('./assets/lines-bot.webp')} style={{ backgroundColor: '#9A0315', width: '100%', height: '100%', }}/>
+          <ImageBackground source={require('./assets/lines-bot.webp')} style={{ backgroundColor: '#9A0315', width: '100%', height: '100%', }} />
         ),
 
-        headerTitle: () => <Pages_header/>,
+        headerTitle: () => <Pages_header />,
 
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
@@ -135,9 +136,11 @@ function Navigation() {
 export default function App() {
   return (
     <AuthProvider>
-    <NavigationContainer>
-      <MainStack />
-    </NavigationContainer>
+      <MoviesProvider>
+        <NavigationContainer>
+          <MainStack />
+        </NavigationContainer>
+      </MoviesProvider>
     </AuthProvider>
   );
 }

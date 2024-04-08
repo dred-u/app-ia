@@ -1,47 +1,61 @@
-import React, { useState } from 'react';
-import { ImageBackground, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ImageBackground, View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useMovies } from '../moviesContext';
 
-const MovieDetails = ({ route }) => {
+export default MovieDetails = ({ route }) => {
   const { object } = route.params;
+  const { getGenres } = useMovies(); 
   const [isLiked, setIsLiked] = useState(false);
+  const [genre, setGenre] = useState([]);
+
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
   };
 
+  useEffect(() => {
+    const fetchData = async () => { 
+      res = await getGenres(object.id_pelicula)
+      setGenre(res || []);
+    };
+
+    fetchData();
+  }, [object.id_pelicula]);
+
   return (
-    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.img}` }}imageStyle={{ opacity: 0.7 }} blurRadius={3} >
-      
+    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.bg_imagen}` }}imageStyle={{ opacity: 0.7 }} blurRadius={3} >
       <View style={styles.content}>
         <View style={styles.principal}>
           <View style={styles.bar} />
           <View style={styles.top_container}>
             <View style={styles.text_elements}>
-              <Text style={styles.title}>{object.title}</Text>
-              <Text style={styles.date}>fecha • duracion</Text>
+              <Text style={styles.title}>{object.titulo}</Text>
+              <Text style={styles.date}>{object.anno_estreno} • {object.duracion_minutos} minutos</Text>
               <Text style={styles.director}>Dirección:</Text>
-              <Text style={styles.director_name}>Director</Text>
-              <TouchableOpacity onPress={toggleLike} style={{marginTop:20}}>
+              <Text style={styles.director_name}>{object.director.nombre}</Text>
+              <Pressable onPress={toggleLike} style={{marginTop:20}}>
                 <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
-            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.img}` }} style={styles.poster} />
+            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.poster} />
           </View>
-          <Text style={styles.description}>Lorem ipsum dolor sit amet consectetur adipiscing elit placerat taciti convallis congue,
-            rhoncus suspendisse viverra odio sollicitudin enim vel fusce platea auctor,
-            commodo nostra erat ornare lectus eget duis in donec litora. </Text>
+          <Text style={styles.description}>{object.descripcion} </Text>
         </View>
         <View style={styles.details}>
           <Text style={{ color: '#ffffff', fontWeight: '700', fontSize: 16 }}>DETALLES</Text>
           <Text style={styles.label}>Genero</Text>
-          <Text style={styles.details_label}>{object.genre}</Text>
+          <Text style={styles.details_label}>{object.genero}</Text>
+          {genre && genre.map(item => (
+            <Text key={item.id_pGeneros} style={styles.details_label}>{item.genero.nombre}</Text>
+          ))}
+          
           <Text style={styles.label}>Productora</Text>
           <Text style={styles.details_label}>Lorem Ipsum</Text>
           <Text style={styles.label}>Disponible en:</Text>
           <View style={{ flexDirection: 'row' }}>
-            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.img}` }} style={styles.distribuitor} />
-            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.img}` }} style={styles.distribuitor} />
+            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.distribuitor} />
+            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.distribuitor} />
           </View>
         </View>
       </View>
@@ -137,5 +151,3 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
-
-export default MovieDetails;
