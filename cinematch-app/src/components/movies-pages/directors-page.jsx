@@ -17,7 +17,6 @@ else {
 }
 
 export default function Directors_page({ list }) {
-  const directores = list[0].rows;
 
   const navigation = useNavigation();
 
@@ -27,9 +26,9 @@ export default function Directors_page({ list }) {
 
   return (
     <ScrollView contentContainerStyle={styles.director_list}>
-      {directores.map((director, index) => (
+      {list.map((director, index) => (
         <TouchableOpacity onPress={() => handlePress(director)} key={index}>
-          <ImageBackground source={{ uri: `https://image.tmdb.org/t/p/original${director.foto}` }} style={{
+          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/original${director.foto}` :  '../../../assets/img/user.jpg' }} style={{
             ...styles.image,
             width: Platform.select({
               android: 85.71,

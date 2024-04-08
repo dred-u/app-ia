@@ -5,7 +5,7 @@ from django.http import Http404
 
 class PeliculasView(viewsets.ModelViewSet):
     serializer_class = PeliculaSerializer
-    queryset = Peliculas.objects.all()[:500]
+    queryset = Peliculas.objects.all()
 
 class DirectoresView(viewsets.ModelViewSet):
     serializer_class = DirectorSerializer
@@ -137,7 +137,7 @@ class PeliculasProvedoresView(viewsets.ModelViewSet):
                 # Obtener el usuario
                 pelicula = Peliculas.objects.get(pk=pelicula_id)
                 # Filtrar los registros por el pelicula
-                queryset = PeliculasProvedores.objects.filter(pelicula=pelicula)
+                queryset = PeliculasProvedores.objects.filter(pelicula=pelicula)[:5]
                 return queryset
             except Peliculas.DoesNotExist:
                 raise Http404("La pelicula no existe")
@@ -160,3 +160,41 @@ class RatingView(viewsets.ModelViewSet):
                 raise Http404("El usuario no existe")
         else:
             return Rating.objects.all()
+        
+class GenerosPeliculasView(viewsets.ModelViewSet):
+    serializer_class = PeliculasGenerosSerializer
+
+    def get_queryset(self):
+        genero_id = self.kwargs.get('genero_id')
+        if genero_id is not None:
+            try:
+                # Obtener el género
+                genero = Genero.objects.get(pk=genero_id)
+                # Filtrar los registros por el género
+                queryset = PeliculasGeneros.objects.filter(genero=genero)
+                return queryset
+            except Genero.DoesNotExist:
+                raise Http404("El género no existe")
+        else:
+            return PeliculasGeneros.objects.all()
+
+
+class DirectoresPeliculasView(viewsets.ModelViewSet):
+    serializer_class = PeliculaSerializer
+
+    def get_queryset(self):
+        director_id = self.kwargs.get('director_id')
+        if director_id is not None:
+            try:
+                # Obtener el género
+                director = Directores.objects.get(pk=director_id)
+                # Filtrar los registros por el género
+                queryset = Peliculas.objects.filter(director=director)
+                return queryset
+            except Directores.DoesNotExist:
+                raise Http404("El director no existe")
+        else:
+            return Peliculas.objects.all()
+
+
+

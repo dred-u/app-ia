@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 const PAGE_WIDTH = Dimensions.get('window').width * 0.4;
 
 export default function Genre_page({ list }) {
-    const genres = list[0].rows;
-
+    const navigation = useNavigation();
+    
     // Función para generar un color aleatorio en formato RGB
     const getRandomColor = () => {
         // Elegir aleatoriamente entre las dos opciones
@@ -30,15 +30,13 @@ export default function Genre_page({ list }) {
         return `rgb(${r},${g},${b})`;
     };
 
-    const navigation = useNavigation();
-
     const handlePress = (object) => {
         navigation.navigate('GenreDetails', { object });
       };
 
     return (
         <ScrollView contentContainerStyle={styles.genre_list}>
-            {genres.map((genre, index) => {
+            {list.map((genre, index) => {
                 const color1 = getRandomColor();
                 let color2;
                 do {

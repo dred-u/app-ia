@@ -14,7 +14,7 @@ router.register(r'productoras', views.ProductorasView, 'productoras')
 router.register(r'directores_favoritos', views.DirectoresFavoritosView, 'directores_favoritos')
 router.register(r'generos_favoritos', views.GenerosFavoritosView, 'generos_favoritos')
 router.register(r'peliculas_favoritas', views.PeliculasFavoritasView, 'peliculas_favoritas')
-router.register(r'productoras_f', views.ProductorasFavoritasView, 'productoras_f')
+router.register(r'productoras_favoritas', views.ProductorasFavoritasView, 'productoras_f')
 router.register(r'peliculas_actores', views.PeliculasActoresView, 'peliculas_actores')
 router.register(r'peliculas_generos', views.PeliculasGenerosView, 'peliculas_generos')
 router.register(r'peliculas_provedores', views.PeliculasProvedoresView, 'peliculas_provedores')
@@ -29,6 +29,9 @@ urlpatterns = [
     path('productoras_favoritas/<int:usuario_id>/', views.ProductorasFavoritasView.as_view({'get': 'list'}), name='productoras_favoritas_u'),
     path('peliculas_generos/<int:pelicula_id>/', views.PeliculasGenerosView.as_view({'get': 'list'}), name='peliculas_generos_e'),
     path('peliculas_actores/<int:pelicula_id>/', views.PeliculasActoresView.as_view({'get': 'list'}), name='peliculas_actores_e'),
+    path('generos_peliculas/<int:genero_id>/', views.GenerosPeliculasView.as_view({'get': 'list'}), name='generos_peliculas_e'),
+    path('directores_peliculas/<int:director_id>/', views.DirectoresPeliculasView.as_view({'get': 'list'}), name='directores_peliculas_e'),
+
     path('peliculas_provedores/<int:pelicula_id>/', views.PeliculasProvedoresView.as_view({'get': 'list'}), name='peliculas_provedores_e'),
     path('rating/<int:usuario_id>/', views.RatingView.as_view({'get': 'list'}), name='rating_u'),
     path('login', viewsAuth.login),

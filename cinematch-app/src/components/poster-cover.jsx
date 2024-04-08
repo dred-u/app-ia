@@ -39,7 +39,7 @@ export default function MoviePoster({ object }) {
             }}>
                 <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,1)']} style={{ paddingTop: 15 }}>
                     <Text style={styles.title} numberOfLines={2}>{object.titulo}</Text>
-                    <Text style={styles.subtitle}>{object.genero}</Text>
+                    <Text style={styles.subtitle}>{object.anno_estreno}</Text>
                 </LinearGradient>
             </ImageBackground>
         </TouchableOpacity>

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Dimensions, Platform, SafeAreaView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { React, useState, useEffect } from 'react';
+import { Dimensions, Platform, SafeAreaView, View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
+import { useMovies } from '../moviesContext';
+import Movies_page from '../components/movies-pages/movies-page';
 
 const screenDim = Dimensions.get('window')
 let screenWidth = null;
@@ -18,18 +21,35 @@ else {
 
 export default DirectorDetails = ({ route }) => {
   const { object } = route.params;
+  const { getDirMovies } = useMovies(); 
+  const navigation  = useNavigation();
   const [isLiked, setIsLiked] = useState(false);
+  const [movies, setMovies] = useState([]);
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
   };
 
+  useEffect(() => {
+    const fetchData = async () => { 
+      res = await getDirMovies(object.id_director)
+      const moviesArray = res.map(item => item);
+      setMovies(moviesArray);
+    };
+
+    fetchData();
+  }, [object.id_director]);
+
   return (
     <SafeAreaView style={styles.content}>
-
+      <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Icon name='chevron-left' size={30} color='white' />
+      </Pressable>
       <View style={styles.top}>
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.foto}` }}
+
+
+        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+          <Image source={{ uri: object.foto ? `https://image.tmdb.org/t/p/original${object.foto}` :  '../../../assets/img/user.jpg' }}
             style={{
               ...styles.image,
               width: Platform.select({
@@ -43,20 +63,18 @@ export default DirectorDetails = ({ route }) => {
             }}
           />
 
-          <Text style={styles.title}>{object.nombre}</Text>      
-          <TouchableOpacity onPress={toggleLike} style={styles.icon}>
-            <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
-          </TouchableOpacity>
+          <View>
+            <Text style={styles.title}>{object.nombre}</Text>
+            <Text style={styles.subtitle}>{object.nacionalidad}</Text>
+            <Text style={styles.subtitle}>{object.fecha_nacimiento}</Text>
+          </View>
+
+          <Pressable onPress={toggleLike} style={styles.icon}>
+              <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
+          </Pressable>
         </View>
-        <Text>{object.nacionalidad}</Text>
-        <Text>{object.fecha_nacimiento}</Text>
-        <Text>{object.biografia}</Text>
-
       </View>
-
-      <View style={styles.details}>
-
-      </View>
+      <Movies_page list={movies} />
     </SafeAreaView>
   );
 };
@@ -71,28 +89,34 @@ const styles = StyleSheet.create({
   top: {
     marginTop: 40,
     paddingBottom: 10,
-    flexDirection: 'column',
+    marginHorizontal: 20,
+    flexDirection: 'row',
     justifyContent: 'center',
     borderBottomWidth: 2,
     borderBottomColor: '#A2A9B2'
   },
+  backButton: {
+    borderRadius: 10,
+    marginRight: 'auto',
+    marginTop: 10,
+    marginLeft: 10,
+  },
   icon: {
-    marginLeft: 'auto',
+    paddingTop: 10
   },
   title: {
     color: 'white',
     fontSize: 25,
     fontWeight: 'bold',
   },
+  subtitle: {
+    color: 'white',
+    fontSize: 16,
+  },
   image: {
-    margin: 1,
+    marginRight: 10,
     justifyContent: 'flex-end',
     borderRadius: 8,
-  },
-
-  details: {
-    marginHorizontal: 20,
-    marginBottom: 10,
   },
 });
 

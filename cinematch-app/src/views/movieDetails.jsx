@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMovies } from '../moviesContext';
+import { useNavigation } from '@react-navigation/native'; 
 
 export default MovieDetails = ({ route }) => {
+  const navigation = useNavigation(); 
   const { object } = route.params;
-  const { getGenres } = useMovies(); 
+  const { getGenres, getProviders } = useMovies(); 
   const [isLiked, setIsLiked] = useState(false);
   const [genre, setGenre] = useState([]);
-
+  const [providers, setProviders] = useState([]);
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
@@ -16,8 +18,10 @@ export default MovieDetails = ({ route }) => {
 
   useEffect(() => {
     const fetchData = async () => { 
-      res = await getGenres(object.id_pelicula)
-      setGenre(res || []);
+      gen = await getGenres(object.id_pelicula)
+      prov = await getProviders(object.id_pelicula)
+      setGenre(gen || []);
+      setProviders(prov);
     };
 
     fetchData();
@@ -25,6 +29,9 @@ export default MovieDetails = ({ route }) => {
 
   return (
     <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.bg_imagen}` }}imageStyle={{ opacity: 0.7 }} blurRadius={3} >
+      <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Icon name='chevron-left' size={30} color='white' />
+      </Pressable>
       <View style={styles.content}>
         <View style={styles.principal}>
           <View style={styles.bar} />
@@ -54,8 +61,9 @@ export default MovieDetails = ({ route }) => {
           <Text style={styles.details_label}>Lorem Ipsum</Text>
           <Text style={styles.label}>Disponible en:</Text>
           <View style={{ flexDirection: 'row' }}>
-            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.distribuitor} />
-            <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.distribuitor} />
+          {providers && providers.map(item => (
+            <Image key={item.id_pProvedores} source={{ uri: `https://image.tmdb.org/t/p/original${item.provedor.foto}` }} style={styles.distribuitor} />
+          ))}
           </View>
         </View>
       </View>
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
   },
   details: {
     marginHorizontal: 20,
-    marginBottom: 10,
+    paddingBottom: 10,
   },
   label: {
     marginTop: 10,
@@ -149,5 +157,13 @@ const styles = StyleSheet.create({
     marginRight: 5,
     resizeMode: 'cover',
     borderRadius: 8,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 10,
   },
 });

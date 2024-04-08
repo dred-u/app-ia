@@ -199,6 +199,13 @@ class PeliculasGenerosSerializer(serializers.ModelSerializer):
             'pelicula': {
                 'id_pelicula': representation['pelicula']['id_pelicula'],
                 'titulo': representation['pelicula']['titulo'],
+                'anno_estreno': representation['pelicula']['anno_estreno'],
+                'duracion_minutos': representation['pelicula']['duracion_minutos'],
+                'descripcion': representation['pelicula']['descripcion'],
+                'director':  representation['pelicula']['director'],
+                'productora': representation['pelicula']['productora'],
+                'poster': representation['pelicula']['poster'],
+                'bg_imagen': representation['pelicula']['bg_imagen'],
             },
             'genero': {
                 'id_genero': representation['genero']['id_genero'],
