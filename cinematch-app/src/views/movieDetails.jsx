@@ -2,33 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { ImageBackground, View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMovies } from '../moviesContext';
-import { useNavigation } from '@react-navigation/native'; 
+import { useAuth } from '../authContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default MovieDetails = ({ route }) => {
-  const navigation = useNavigation(); 
+export default function MovieDetails({ route }) {
+  const navigation = useNavigation();
   const { object } = route.params;
-  const { getGenres, getProviders } = useMovies(); 
+  const { getGenres, getProviders, favoriteMovies, addFavMovie, delFavMovie } = useMovies();
+  const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [genre, setGenre] = useState([]);
   const [providers, setProviders] = useState([]);
 
   const toggleLike = () => {
+    if (isLiked) {
+      delFavMovie(object.id_pelicula);
+    } else {
+      const data = {
+        id_pelicula: object.id_pelicula,
+        id_usuario: user.id
+      };
+      addFavMovie(data);
+    }
+
     setIsLiked(!isLiked);
   };
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       gen = await getGenres(object.id_pelicula)
       prov = await getProviders(object.id_pelicula)
-      setGenre(gen || []);
+      setGenre(gen);
       setProviders(prov);
     };
+
+      for (let i = 0; i < favoriteMovies.length; i++) {
+        if (favoriteMovies[i].id_pelicula === object.id_pelicula) {
+          setIsLiked(true);
+          break; 
+        }
+      }
 
     fetchData();
   }, [object.id_pelicula]);
 
+
   return (
-    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.bg_imagen}` }}imageStyle={{ opacity: 0.7 }} blurRadius={3} >
+    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.bg_imagen}` }} imageStyle={{ opacity: 0.7 }} blurRadius={3} >
       <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
         <Icon name='chevron-left' size={30} color='white' />
       </Pressable>
@@ -40,9 +60,9 @@ export default MovieDetails = ({ route }) => {
               <Text style={styles.title}>{object.titulo}</Text>
               <Text style={styles.date}>{object.anno_estreno} • {object.duracion_minutos} minutos</Text>
               <Text style={styles.director}>Dirección:</Text>
-              <Text style={styles.director_name}>{object.director.nombre}</Text>
-              <Pressable onPress={toggleLike} style={{marginTop:20}}>
-                <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
+              <Text style={styles.director_name}>{object.director}</Text>
+              <Pressable onPress={toggleLike} style={{ marginTop: 20 }}>
+              <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color='white' />
               </Pressable>
             </View>
             <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.poster} />
@@ -56,18 +76,18 @@ export default MovieDetails = ({ route }) => {
           {genre && genre.map(item => (
             <Text key={item.id_pGeneros} style={styles.details_label}>{item.genero.nombre}</Text>
           ))}
-          
+
           <Text style={styles.label}>Productora</Text>
           <Text style={styles.details_label}>Lorem Ipsum</Text>
           <Text style={styles.label}>Disponible en:</Text>
           <View style={{ flexDirection: 'row' }}>
-          {providers && providers.map(item => (
-            <Image key={item.id_pProvedores} source={{ uri: `https://image.tmdb.org/t/p/original${item.provedor.foto}` }} style={styles.distribuitor} />
-          ))}
+            {providers && providers.map(item => (
+              <Image key={item.id_pProvedores} source={{ uri: `https://image.tmdb.org/t/p/original${item.provedor.foto}` }} style={styles.distribuitor} />
+            ))}
           </View>
         </View>
       </View>
-      
+
     </ImageBackground>
   );
 };

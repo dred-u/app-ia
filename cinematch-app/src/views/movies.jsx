@@ -7,13 +7,12 @@ import Genre_page from '../components/movies-pages/genres-page';
 
 import { useMovies } from '../moviesContext';
 
-import { directoresItems, producersItems } from '../components/carousel-elements';
+import { producersItems } from '../components/carousel-elements';
 
 
 export default function Movies() {
-  const [currentPage, setCurrentPage] = useState('Movies');
-
   const { movies, genres, directors } = useMovies(); 
+  const [currentPage, setCurrentPage] = useState('Movies');
 
   const renderPage = () => {
     if (currentPage === 'Movies') {

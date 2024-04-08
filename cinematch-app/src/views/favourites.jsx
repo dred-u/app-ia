@@ -5,21 +5,24 @@ import Directors_page from '../components/movies-pages/directors-page';
 import Producer_page from '../components/movies-pages/producer-page';
 import Genre_page from '../components/movies-pages/genres-page';
 
-import { items2, directoresItems, producersItems } from '../components/carousel-elements';
+import { useMovies } from '../moviesContext';
+
+import { producersItems } from '../components/carousel-elements';
 
 export default function Movies() {
-
+  const { favoriteMovies, favoriteGenres, favoriteDirectors} = useMovies(); 
   const [currentPage, setCurrentPage] = useState('Movies');
+
 
   const renderPage = () => {
     if (currentPage === 'Movies') {
-      return <Movies_page list={items2} />;
+      return <Movies_page list={favoriteMovies} />;
     } else if (currentPage === 'Directors') {
-      return <Directors_page list={directoresItems} />;
+      return <Directors_page list={favoriteDirectors} />;
     } else if (currentPage === 'Producers') {
       return <Producer_page list={producersItems} />;
     } else if (currentPage === 'Genres') {
-      return <Genre_page list={producersItems} />;
+      return <Genre_page list={favoriteGenres} />;
     }
   };
 

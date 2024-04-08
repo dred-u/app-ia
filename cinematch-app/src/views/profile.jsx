@@ -12,7 +12,6 @@ export default function Profile({navigation}) {
 
   const onSubmit = async () => {
     logout();
-
   };
 
   return (

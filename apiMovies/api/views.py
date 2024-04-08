@@ -2,6 +2,9 @@ from rest_framework import viewsets
 from .serializer import *
 from .models import *
 from django.http import Http404
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.response import Response
 
 class PeliculasView(viewsets.ModelViewSet):
     serializer_class = PeliculaSerializer
@@ -196,5 +199,82 @@ class DirectoresPeliculasView(viewsets.ModelViewSet):
         else:
             return Peliculas.objects.all()
 
+#METODOS PARA POSTEAR DATOS
+@api_view(['POST'])
+def AgregarPeliculaFavorita(request):
+    serializer = AgregarPeliculaFavoritaSerializer(data=request.data)
 
+    if serializer.is_valid():
+        id_pelicula = serializer.validated_data['id_pelicula']
+        id_usuario = serializer.validated_data['id_usuario']
 
+        if not PeliculasFavoritas.objects.filter(usuario_id=id_usuario, pelicula_id=id_pelicula).exists():
+            # Si no existe, la agregamos a favoritos
+            PeliculasFavoritas.objects.create(usuario_id=id_usuario, pelicula_id=id_pelicula)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else: 
+            return Response({'message': 'El dato ya existe'})
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def AgregarGeneroFavorito(request):
+    serializer = AgregarGeneroFavoritoSerializer(data=request.data)
+
+    if serializer.is_valid():
+        id_genero = serializer.validated_data['id_genero']
+        id_usuario = serializer.validated_data['id_usuario']
+
+        if not GenerosFavoritos.objects.filter(usuario_id=id_usuario, id_genero=id_genero).exists():
+            # Si no existe, la agregamos a favoritos
+            GenerosFavoritos.objects.create(usuario_id=id_usuario, id_genero=id_genero)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else: 
+            return Response({'message': 'El dato ya existe'})
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def AgregarDirectorFavorito(request):
+    serializer = AgregarDirectorFavoritoSerializer(data=request.data)
+
+    if serializer.is_valid():
+        id_director = serializer.validated_data['id_director']
+        id_usuario = serializer.validated_data['id_usuario']
+
+        if not DirectoresFavoritos.objects.filter(usuario_id=id_usuario, id_director=id_director).exists():
+            # Si no existe, la agregamos a favoritos
+            DirectoresFavoritos.objects.create(usuario_id=id_usuario, id_director=id_director)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else: 
+            return Response({'message': 'El dato ya existe'})
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#METODOS PARA BORRAR DATOS
+@api_view(['DELETE'])
+def EliminarPeliculaFavorita(request, pelicula_id):
+    try:
+        pelicula_favorita = PeliculasFavoritas.objects.get(pelicula=pelicula_id)
+        pelicula_favorita.delete()
+        return Response({'message': 'Película favorita eliminada correctamente'}, status=status.HTTP_204_NO_CONTENT)
+    except PeliculasFavoritas.DoesNotExist:
+        return Response({'error': 'La película favorita no existe'}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['DELETE'])
+def EliminarGeneroFavorito(request, genero_id):
+    try:
+        genero_favorito = GenerosFavoritos.objects.get(genero=genero_id)
+        genero_favorito.delete()
+        return Response({'message': 'Genero eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
+    except GenerosFavoritos.DoesNotExist:
+        return Response({'error': 'La película favorita no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+def EliminarDirectorFavorito(request, director_id):
+    try:
+        director_favorito = DirectoresFavoritos.objects.get(genero=director_id)
+        director_favorito.delete()
+        return Response({'message': 'Director eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
+    except DirectoresFavoritos.DoesNotExist:
+        return Response({'error': 'La película favorita no existe'}, status=status.HTTP_404_NOT_FOUND)

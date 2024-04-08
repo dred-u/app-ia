@@ -265,3 +265,15 @@ class RatingSerializer(serializers.ModelSerializer):
             },
             'rating': representation['rating'],           
         }     
+
+class AgregarPeliculaFavoritaSerializer(serializers.Serializer):
+    id_pelicula = serializers.IntegerField()
+    id_usuario = serializers.IntegerField()
+
+class AgregarGeneroFavoritoSerializer(serializers.Serializer):
+    id_genero = serializers.IntegerField()
+    id_usuario = serializers.IntegerField()
+
+class AgregarDirectorFavoritoSerializer(serializers.Serializer):
+    id_director = serializers.IntegerField()
+    id_usuario = serializers.IntegerField()

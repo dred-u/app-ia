@@ -3,6 +3,7 @@ import { Dimensions, Platform, SafeAreaView, View, Text, Image, StyleSheet, Pres
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { useMovies } from '../moviesContext';
+import { useAuth } from '../authContext';
 import Movies_page from '../components/movies-pages/movies-page';
 
 const screenDim = Dimensions.get('window')
@@ -19,14 +20,25 @@ else {
 }
 
 
-export default DirectorDetails = ({ route }) => {
+export default function DirectorDetails ({ route }) {
   const { object } = route.params;
-  const { getDirMovies } = useMovies(); 
+  const { user } = useAuth();
+  const { getDirMovies, favoriteDirectors, addFavDirector, delFavDirector } = useMovies(); 
   const navigation  = useNavigation();
   const [isLiked, setIsLiked] = useState(false);
   const [movies, setMovies] = useState([]);
 
   const toggleLike = () => {
+    if (isLiked) {
+      delFavDirector(object.id_director);
+    } else {
+      const data = {
+        id_director: object.id_director,
+        id_usuario: user.id
+      };
+      addFavDirector(data);
+    }
+
     setIsLiked(!isLiked);
   };
 
@@ -36,6 +48,13 @@ export default DirectorDetails = ({ route }) => {
       const moviesArray = res.map(item => item);
       setMovies(moviesArray);
     };
+
+    for (let i = 0; i < favoriteDirectors.length; i++) {
+      if (favoriteDirectors[i].id_director === object.id_director) {
+        setIsLiked(true);
+        break; 
+      }
+    }
 
     fetchData();
   }, [object.id_director]);
