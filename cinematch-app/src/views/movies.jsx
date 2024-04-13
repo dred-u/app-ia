@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { React, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import Movies_page from '../components/movies-pages/movies-page';
 import Directors_page from '../components/movies-pages/directors-page';
 import Producer_page from '../components/movies-pages/producer-page';
@@ -7,11 +7,8 @@ import Genre_page from '../components/movies-pages/genres-page';
 
 import { useMovies } from '../moviesContext';
 
-import { producersItems } from '../components/carousel-elements';
-
-
 export default function Movies() {
-  const { movies, genres, directors } = useMovies(); 
+  const { movies, genres, directors, producers } = useMovies(); 
   const [currentPage, setCurrentPage] = useState('Movies');
 
   const renderPage = () => {
@@ -20,7 +17,7 @@ export default function Movies() {
     } else if (currentPage === 'Directors') {
       return <Directors_page list={directors} />;
     } else if (currentPage === 'Producers') {
-      return <Producer_page list={producersItems} />;
+      return <Producer_page list={producers} />;
     } else if (currentPage === 'Genres') {
       return <Genre_page list={genres} />;
     }

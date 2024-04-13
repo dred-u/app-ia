@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { ImageBackground, View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { ImageBackground, View, Text, Image, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMovies } from '../moviesContext';
 import { useAuth } from '../authContext';
 import { useNavigation } from '@react-navigation/native';
+import RatingModal from '../components/movies-pages/ratingModal';
 
 export default function MovieDetails({ route }) {
   const navigation = useNavigation();
   const { object } = route.params;
-  const { getGenres, getProviders, favoriteMovies, addFavMovie, delFavMovie } = useMovies();
+  const { getGenres, getProviders, getDirectors, getMovieReview,
+          getProducers, favoriteMovies, addFavMovie, delFavMovie } = useMovies();
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
+  const [isRated, setIsRated] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
   const [genre, setGenre] = useState([]);
   const [providers, setProviders] = useState([]);
+  const [directors, setDirectors] = useState([]);
+  const [producers, setProducers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [favoriteID, setFavoriteID] = useState(null);
 
   const toggleLike = () => {
     if (isLiked) {
-      delFavMovie(object.id_pelicula);
+      delFavMovie(favoriteID);
     } else {
       const data = {
-        id_pelicula: object.id_pelicula,
-        id_usuario: user.id
+        pelicula: object.id_pelicula,
+        usuario: user.id
       };
       addFavMovie(data);
     }
@@ -28,27 +36,46 @@ export default function MovieDetails({ route }) {
     setIsLiked(!isLiked);
   };
 
+  const toggleRating = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      gen = await getGenres(object.id_pelicula)
-      prov = await getProviders(object.id_pelicula)
+      gen = await getGenres(object.id_pelicula);
+      prov = await getProviders(object.id_pelicula);
+      dir = await getDirectors(object.id_pelicula);
+      prod = await getProducers(object.id_pelicula);
       setGenre(gen);
       setProviders(prov);
+      setDirectors(dir);
+      setProducers(prod);
+      setLoading(false);
     };
 
+    if (favoriteMovies) {
       for (let i = 0; i < favoriteMovies.length; i++) {
-        if (favoriteMovies[i].id_pelicula === object.id_pelicula) {
+        if (favoriteMovies[i].pelicula.id_pelicula === object.id_pelicula) {
           setIsLiked(true);
-          break; 
+          setFavoriteID(favoriteMovies[i].id_fPelicula);
+          break;
         }
       }
-
+    }
     fetchData();
   }, [object.id_pelicula]);
 
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
   return (
-    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/original${object.bg_imagen}` }} imageStyle={{ opacity: 0.7 }} blurRadius={3} >
+    <ImageBackground style={styles.container} source={{ uri: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${object.bg_imagen}` }} imageStyle={{ opacity: 0.7 }} blurRadius={3} >
       <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
         <Icon name='chevron-left' size={30} color='white' />
       </Pressable>
@@ -60,10 +87,22 @@ export default function MovieDetails({ route }) {
               <Text style={styles.title}>{object.titulo}</Text>
               <Text style={styles.date}>{object.anno_estreno} • {object.duracion_minutos} minutos</Text>
               <Text style={styles.director}>Dirección:</Text>
-              <Text style={styles.director_name}>{object.director}</Text>
-              <Pressable onPress={toggleLike} style={{ marginTop: 20 }}>
-              <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color='white' />
-              </Pressable>
+              {directors && directors.map(item => (
+                <Text key={item.id_pDirectores} style={styles.director_name}>{item.director.nombre}</Text>
+              ))}
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <Pressable onPress={toggleLike}>
+                  <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color='white' />
+                </Pressable>
+                <Pressable
+                  onPress={toggleRating}
+                  style={[styles.ratingButton, { backgroundColor: isRated ? '#ffffff' : 'rgba(255, 255, 255, 0)' }]}
+                >
+                  <Text style={{ fontSize: 15, fontWeight: 'bold', color: isRated ? '#000000' : '#ffffff' }}>Calificar</Text>
+                  <Icon name={isRated ? 'star' : 'star-outline'} size={30} color={isRated ? '#000000' : '#ffffff'} />
+                </Pressable>
+              </View>
+
             </View>
             <Image source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={styles.poster} />
           </View>
@@ -72,22 +111,33 @@ export default function MovieDetails({ route }) {
         <View style={styles.details}>
           <Text style={{ color: '#ffffff', fontWeight: '700', fontSize: 16 }}>DETALLES</Text>
           <Text style={styles.label}>Genero</Text>
-          <Text style={styles.details_label}>{object.genero}</Text>
           {genre && genre.map(item => (
             <Text key={item.id_pGeneros} style={styles.details_label}>{item.genero.nombre}</Text>
           ))}
 
           <Text style={styles.label}>Productora</Text>
-          <Text style={styles.details_label}>Lorem Ipsum</Text>
+          {producers && producers.map(item => (
+            <Text key={item.id_pProductoras} style={styles.details_label}>{item.productora.nombre}</Text>
+          ))}
           <Text style={styles.label}>Disponible en:</Text>
           <View style={{ flexDirection: 'row' }}>
-            {providers && providers.map(item => (
-              <Image key={item.id_pProvedores} source={{ uri: `https://image.tmdb.org/t/p/original${item.provedor.foto}` }} style={styles.distribuitor} />
-            ))}
+            {providers ? (
+              providers.map(item => (
+                <React.Fragment key={item.id_pProvedores}>
+                  {item.provedor.foto ? (
+                    <Image source={{ uri: `https://image.tmdb.org/t/p/original${item.provedor.foto}` }} style={styles.distribuitor} />
+                  ) : (
+                    <Text>No hay imagen disponible</Text>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <Text style={styles.details_label}>No disponible aun en algun servicio</Text>
+            )}
           </View>
         </View>
       </View>
-
+      <RatingModal id={object.id_pelicula} isVisible={isModalVisible} onClose={() => setModalVisible(false)} />
     </ImageBackground>
   );
 };
@@ -185,5 +235,15 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 10,
+  },
+  ratingButton: {
+    flexDirection: 'row',
+    borderWidth: 2,
+    borderRadius: 4,
+    borderColor: '#ffffff',
+    marginLeft: 10,
+    padding: 2,
+    paddingLeft: 10,
+    alignItems: 'center'
   },
 });

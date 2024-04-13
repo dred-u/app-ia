@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useMovies } from '../moviesContext';
 import { useAuth } from '../authContext';
 import Movies_page from '../components/movies-pages/movies-page';
-
 const screenDim = Dimensions.get('window')
 let screenWidth = null;
 let screenHeight = null;
@@ -20,21 +19,22 @@ else {
 }
 
 
-export default function DirectorDetails ({ route }) {
+export default function DirectorDetails({ route }) {
   const { object } = route.params;
   const { user } = useAuth();
-  const { getDirMovies, favoriteDirectors, addFavDirector, delFavDirector } = useMovies(); 
-  const navigation  = useNavigation();
+  const { getDirMovies, favoriteDirectors, addFavDirector, delFavDirector } = useMovies();
+  const navigation = useNavigation();
   const [isLiked, setIsLiked] = useState(false);
   const [movies, setMovies] = useState([]);
+  const [favoriteID, setFavoriteID] = useState(null);
 
   const toggleLike = () => {
     if (isLiked) {
-      delFavDirector(object.id_director);
+      delFavDirector(favoriteID);
     } else {
       const data = {
-        id_director: object.id_director,
-        id_usuario: user.id
+        director: object.id_director,
+        usuario: user.id
       };
       addFavDirector(data);
     }
@@ -43,16 +43,18 @@ export default function DirectorDetails ({ route }) {
   };
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       res = await getDirMovies(object.id_director)
-      const moviesArray = res.map(item => item);
+      const moviesArray = res.map(item => item.pelicula);
       setMovies(moviesArray);
     };
-
-    for (let i = 0; i < favoriteDirectors.length; i++) {
-      if (favoriteDirectors[i].id_director === object.id_director) {
-        setIsLiked(true);
-        break; 
+    if (favoriteDirectors) {
+      for (let i = 0; i < favoriteDirectors.length; i++) {
+        if (favoriteDirectors[i].director.id_director === object.id_director) {
+          setIsLiked(true);
+          setFavoriteID(favoriteDirectors[i].id_fDirectores);
+          break;
+        }
       }
     }
 
@@ -68,7 +70,7 @@ export default function DirectorDetails ({ route }) {
 
 
         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-          <Image source={{ uri: object.foto ? `https://image.tmdb.org/t/p/original${object.foto}` :  '../../../assets/img/user.jpg' }}
+          <Image source={{ uri: object.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${object.foto}` : 'https://image.jimcdn.com/app/cms/image/transf/dimension=640x1024:format=jpg/path/s5044ce942026e8f2/image/ifcd5c51461c2dc3d/version/1628532290/image.jpg'}}
             style={{
               ...styles.image,
               width: Platform.select({
@@ -89,7 +91,7 @@ export default function DirectorDetails ({ route }) {
           </View>
 
           <Pressable onPress={toggleLike} style={styles.icon}>
-              <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
+            <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
           </Pressable>
         </View>
       </View>

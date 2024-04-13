@@ -92,30 +92,30 @@ export default function Register({ navigation }) {
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            placeholder={showErrors ? formErrors.username:''} 
             value={formValues.username}
             onChangeText={(text) => handleInputChange('username', text)}
           />
-          {showErrors ? <Text style={styles.validations}>{formErrors.username}</Text>: <Text></Text>}
 
           <Text style={styles.label}>Correo electrónico</Text>
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            placeholder={showErrors ? formErrors.email:''} 
             value={formValues.email}
             onChangeText={(text) => handleInputChange('email', text)}
           />       
-          {showErrors ? <Text style={styles.validations}>{formErrors.email}</Text>: <Text></Text>}  
 
           <Text style={styles.label}>Contraseña</Text>
 
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            placeholder={showErrors ? formErrors.password:''} 
             secureTextEntry
             value={formValues.password}
             onChangeText={(text) => handleInputChange('password', text)}
           />
-          {showErrors ? <Text style={styles.validations}>{formErrors.password}</Text>: <Text></Text>}  
         </View>
 
         <Pressable onPress={onSubmit}>

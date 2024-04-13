@@ -7,7 +7,7 @@ export default function Profile({navigation}) {
   const { isAuthenticated, logout, user} = useAuth(); 
 
   useEffect(() => {
-      navigation.navigate('Login')
+    if (isAuthenticated == false) navigation.navigate('Login') //Aqui se viaja a la pantalla de Inicio
   },[isAuthenticated])
 
   const onSubmit = async () => {

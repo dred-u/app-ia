@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { Dimensions, ScrollView, StyleSheet, View, Text, Platform } from "react-native";
+import { React,  useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, View, Text, Platform, ActivityIndicator } from "react-native";
 
-import Carousel from '../components/carousel'; 
-import Movie_list from '../components/movie-list'; 
+import Carousel from '../components/carousel';
+import Movie_list from '../components/movie-list';
 
 import { items2, items3 } from '../components/carousel-elements';
 
@@ -12,34 +11,28 @@ const PAGE_HEIGHT = Dimensions.get('window').height;
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulación de tiempo de carga
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // Verifica si la lista es nula o esta vacia
+  if (!items2 || items2.length === 0) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container_body}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#ffffff" />
-        </View>
-      ) : (
-        <View style={styles.fy_space}>
-          <Text style={styles.title}>
-            Para ti
-          </Text>
+      <View style={styles.fy_space}>
+        <Text style={styles.title}>
+          Para ti
+        </Text>
 
-          <View style={styles.carousel_container}>
-            <Carousel list={items2} />
-            <Movie_list list={items3} title={"Recomendadas"} />
-            <Movie_list list={items2} title={"De tus generos favoritos"} />
-          </View>
+        <View style={styles.carousel_container}>
+          <Carousel list={items2} />
+          <Movie_list list={items3} title={"Recomendadas"} />
+          <Movie_list list={items2} title={"De tus generos favoritos"} />
         </View>
-      )}
+      </View>
     </ScrollView>
   );
 }
@@ -47,7 +40,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container_body: {
     backgroundColor: '#2E2E2E',
-    height:'100%',
+    height: '100%',
     width: '100%',
   },
 
@@ -72,7 +65,7 @@ const styles = StyleSheet.create({
   loadingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height:'100%',
+    height: '100%',
     width: '100%',
   },
 });

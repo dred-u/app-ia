@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseURL = 'http://localhost:8000/api' //IP DEL SERVIDOR DJANGO
+export const baseURL = 'https://cinematch-api.onrender.com/api' //IP DEL SERVIDOR DJANGO
 
 export const registerRequest = async (data) => axios.post(`${baseURL}/register`, data);
 

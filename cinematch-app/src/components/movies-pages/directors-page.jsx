@@ -1,5 +1,5 @@
-import React from 'react'
-import { Platform, Dimensions, TouchableOpacity, Text, ImageBackground, ScrollView, StyleSheet } from 'react-native'
+import { React, useEffect, useState } from 'react'
+import { Platform, Dimensions, TouchableOpacity, Text, ImageBackground, ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,18 +17,55 @@ else {
 }
 
 export default function Directors_page({ list }) {
-
   const navigation = useNavigation();
 
   const handlePress = (object) => {
     navigation.navigate('DirectorDetails', { object });
   };
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!list || list.length === 0) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoading(false);
+    }
+  }, [list]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
+  if (!list || list.length === 0) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Aun no hay directores disponibles</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.director_list}>
       {list.map((director, index) => (
         <TouchableOpacity onPress={() => handlePress(director)} key={index}>
-          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/original${director.foto}` :  '../../../assets/img/user.jpg' }} style={{
+          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${director.foto}` : '../../../assets/img/user.jpg' }} style={{
             ...styles.image,
             width: Platform.select({
               android: 85.71,
@@ -74,6 +111,22 @@ const styles = StyleSheet.create({
     margin: 1,
     justifyContent: 'flex-end',
     borderRadius: 80,
-  }
+  },
+  loadingContainer: {
+    height:'100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    height:'80%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#ffffff',
+  },
 
 });

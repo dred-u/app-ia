@@ -1,10 +1,40 @@
-import React from 'react'
-import { Platform, ScrollView, StyleSheet } from 'react-native'
+import { React, useEffect, useState } from 'react'
+import { Platform, ScrollView, View, ActivityIndicator, StyleSheet, Text } from 'react-native'
 import MoviePoster from '../../components/poster-cover'
 
 export default function Movies_page({list}) {
-  return (
-    <ScrollView contentContainerStyle={styles.movie_list}>
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!list || list.length === 0) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoading(false);
+    }
+  }, [list]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    );
+  }
+
+  if (!list || list.length === 0) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Aun no hay películas disponibles</Text>
+      </View>
+    );
+  }
+
+return (
+  <ScrollView contentContainerStyle={styles.movie_list}>
     {list.map((movie, index) => (
       <MoviePoster
         key={index}
@@ -12,7 +42,7 @@ export default function Movies_page({list}) {
       />
     ))}
   </ScrollView>
-  )
+);
 }
 
 const styles = StyleSheet.create({
@@ -26,5 +56,21 @@ const styles = StyleSheet.create({
         web: 'flex-start',
       }),
       paddingBottom: 75,
-    }
+    },
+    loadingContainer: {
+      height:'100%',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    errorContainer: {
+      height:'80%',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    errorText: {
+      fontSize: 16,
+      color: '#ffffff',
+    },
   });

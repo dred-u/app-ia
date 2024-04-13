@@ -1,9 +1,9 @@
-import React from 'react';
-import { TouchableOpacity, Platform, Dimensions, Text, ScrollView, StyleSheet } from 'react-native';
+import { React, useEffect, useState } from 'react'
+import { TouchableOpacity, Dimensions, Text, ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-const PAGE_WIDTH = Dimensions.get('window').width * 0.4;
+const PAGE_WIDTH = Dimensions.get('window').width * 0.39;
 
 export default function Genre_page({ list }) {
     const navigation = useNavigation();
@@ -33,6 +33,44 @@ export default function Genre_page({ list }) {
     const handlePress = (object) => {
         navigation.navigate('GenreDetails', { object });
       };
+    
+      const [isLoading, setIsLoading] = useState(true);
+
+      useEffect(() => {
+        if (!list || list.length === 0) {
+          const timer = setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
+          
+          return () => clearTimeout(timer);
+        } else {
+          setIsLoading(false);
+        }
+      }, [list]);
+    
+      if (isLoading) {
+        return (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        );
+      }
+    
+      if (isLoading) {
+        return (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        );
+      }
+    
+      if (!list || list.length === 0) {
+        return (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Aun no hay generos disponibles</Text>
+          </View>
+        );
+      }
 
     return (
         <ScrollView contentContainerStyle={styles.genre_list}>
@@ -64,6 +102,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         paddingBottom: 75,
+        justifyContent: 'center',
     },
     container: {
         width: PAGE_WIDTH,
@@ -79,4 +118,20 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
+    loadingContainer: {
+        height:'100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      errorContainer: {
+        height:'80%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      errorText: {
+        fontSize: 16,
+        color: '#ffffff',
+      },
 });

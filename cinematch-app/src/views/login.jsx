@@ -56,6 +56,7 @@ export default function Login({ navigation }) {
   const onSubmit = async () => {
     if(isValidForm()){
       login(formValues)
+      navigation.navigate('Navigation')
     }
   };
 
@@ -85,20 +86,20 @@ export default function Login({ navigation }) {
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            placeholder={showErrors ? formErrors.email:''} 
             value={formValues.email}
             onChangeText={(text) => handleInputChange('email', text)}
           />       
-          {showErrors ? <Text style={styles.validations}>{formErrors.email}</Text>: <Text></Text>}  
 
           <Text style={styles.label}>Contraseña</Text>
           <TextInput
             style={styles.input}
             autoCapitalize="none"
+            placeholder={showErrors ? formErrors.password:''} 
             secureTextEntry
             value={formValues.password}
             onChangeText={(text) => handleInputChange('password', text)}
-          />
-          {showErrors ? <Text style={styles.validations}>{formErrors.password}</Text>: <Text></Text>}  
+          /> 
         </View>
 
         <TouchableOpacity onPress={onSubmit}>

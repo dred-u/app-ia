@@ -26,7 +26,7 @@ export default function MoviePoster({ object }) {
 
     return (
         <TouchableOpacity onPress={handlePress}>
-            <ImageBackground source={{ uri: `https://image.tmdb.org/t/p/original${object.poster}` }} style={{
+            <ImageBackground source={{ uri: `https://image.tmdb.org/t/p/w600_and_h900_bestv2${object.poster}` }} style={{
                 ...styles.poster,
                 width: Platform.select({
                     android: 85.71,

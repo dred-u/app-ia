@@ -1,26 +1,27 @@
 import { React, useState, useEffect } from 'react';
-import {ScrollView, View, Text, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 import { useMovies } from '../moviesContext';
 import { useAuth } from '../authContext';
 import Movies_page from '../components/movies-pages/movies-page';
 
-export default function GenreDetails ({ route }) {
-  const navigation = useNavigation(); 
+export default function GenreDetails({ route }) {
+  const navigation = useNavigation();
   const { object } = route.params;
-  const { getGenMovies, favoriteGenres, addFavGenre, delFavGenre } = useMovies(); 
+  const { getGenMovies, favoriteGenres, addFavGenre, delFavGenre } = useMovies();
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [movies, setMovies] = useState([]);
+  const [favoriteID, setFavoriteID] = useState(null);
 
   const toggleLike = () => {
     if (isLiked) {
-      delFavGenre(object.id_genero);
+      delFavGenre(favoriteID);
     } else {
       const data = {
-        id_genero: object.id_genero,
-        id_usuario: user.id
+        genero: object.id_genero,
+        usuario: user.id
       };
       addFavGenre(data);
     }
@@ -29,16 +30,19 @@ export default function GenreDetails ({ route }) {
   };
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       res = await getGenMovies(object.id_genero)
       const moviesArray = res.map(item => item.pelicula);
       setMovies(moviesArray);
     };
 
-    for (let i = 0; i < favoriteGenres.length; i++) {
-      if (favoriteGenres[i].id_genero === object.id_genero) {
-        setIsLiked(true);
-        break; 
+    if (favoriteGenres) {
+      for (let i = 0; i < favoriteGenres.length; i++) {
+        if (favoriteGenres[i].genero.id_genero === object.id_genero) {
+          setIsLiked(true);
+          setFavoriteID(favoriteGenres[i].id_fGeneros);
+          break;
+        }
       }
     }
 
@@ -57,7 +61,7 @@ export default function GenreDetails ({ route }) {
           <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color={isLiked ? 'white' : 'white'} />
         </Pressable>
       </View>
-        <Movies_page list={movies} />
+      <Movies_page list={movies} />
     </View>
   );
 };
@@ -67,9 +71,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E2E2E',
     height: '100%',
   },
-  top:{
+  top: {
     marginTop: 40,
-    paddingBottom:10,
+    paddingBottom: 10,
     marginHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -77,8 +81,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#A2A9B2'
   },
-  icon:{
-    marginLeft:'auto',
+  icon: {
+    marginLeft: 'auto',
   },
   title: {
     color: 'white',

@@ -225,9 +225,9 @@ def AgregarGeneroFavorito(request):
         id_genero = serializer.validated_data['id_genero']
         id_usuario = serializer.validated_data['id_usuario']
 
-        if not GenerosFavoritos.objects.filter(usuario_id=id_usuario, id_genero=id_genero).exists():
+        if not GenerosFavoritos.objects.filter(usuario_id=id_usuario, genero_id=id_genero).exists():
             # Si no existe, la agregamos a favoritos
-            GenerosFavoritos.objects.create(usuario_id=id_usuario, id_genero=id_genero)
+            GenerosFavoritos.objects.create(usuario_id=id_usuario, genero_id=id_genero)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else: 
             return Response({'message': 'El dato ya existe'})
@@ -242,9 +242,9 @@ def AgregarDirectorFavorito(request):
         id_director = serializer.validated_data['id_director']
         id_usuario = serializer.validated_data['id_usuario']
 
-        if not DirectoresFavoritos.objects.filter(usuario_id=id_usuario, id_director=id_director).exists():
+        if not DirectoresFavoritos.objects.filter(usuario_id=id_usuario, director_id=id_director).exists():
             # Si no existe, la agregamos a favoritos
-            DirectoresFavoritos.objects.create(usuario_id=id_usuario, id_director=id_director)
+            DirectoresFavoritos.objects.create(usuario_id=id_usuario, director_id=id_director)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else: 
             return Response({'message': 'El dato ya existe'})
@@ -268,13 +268,13 @@ def EliminarGeneroFavorito(request, genero_id):
         genero_favorito.delete()
         return Response({'message': 'Genero eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
     except GenerosFavoritos.DoesNotExist:
-        return Response({'error': 'La película favorita no existe'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'El genero favorito no existe'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['DELETE'])
 def EliminarDirectorFavorito(request, director_id):
     try:
-        director_favorito = DirectoresFavoritos.objects.get(genero=director_id)
+        director_favorito = DirectoresFavoritos.objects.get(director=director_id)
         director_favorito.delete()
         return Response({'message': 'Director eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
     except DirectoresFavoritos.DoesNotExist:
-        return Response({'error': 'La película favorita no existe'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'El director no existe'}, status=status.HTTP_404_NOT_FOUND)

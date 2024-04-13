@@ -7,22 +7,23 @@ import Genre_page from '../components/movies-pages/genres-page';
 
 import { useMovies } from '../moviesContext';
 
-import { producersItems } from '../components/carousel-elements';
-
 export default function Movies() {
-  const { favoriteMovies, favoriteGenres, favoriteDirectors} = useMovies(); 
+  const { favoriteMovies, favoriteGenres, favoriteDirectors, favoriteProducers} = useMovies(); 
   const [currentPage, setCurrentPage] = useState('Movies');
 
+  const moviesArray = favoriteMovies.map(item => item.pelicula);
+  const genresArray = favoriteGenres.map(item => item.genero);
+  const directorsArray = favoriteDirectors.map(item => item.director);
 
   const renderPage = () => {
     if (currentPage === 'Movies') {
-      return <Movies_page list={favoriteMovies} />;
+      return <Movies_page list={moviesArray} />;
     } else if (currentPage === 'Directors') {
-      return <Directors_page list={favoriteDirectors} />;
+      return <Directors_page list={directorsArray} />;
     } else if (currentPage === 'Producers') {
-      return <Producer_page list={producersItems} />;
+      return <Producer_page list={favoriteProducers} />;
     } else if (currentPage === 'Genres') {
-      return <Genre_page list={favoriteGenres} />;
+      return <Genre_page list={genresArray} />;
     }
   };
 
