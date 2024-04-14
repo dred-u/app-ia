@@ -32,6 +32,8 @@ export const MoviesProvider = ({ children }) => {
     const [favoriteGenres, setFavoriteGenres] = useState(null);
     const [favoriteDirectors, setFavoriteDirectors] = useState(null);
     const [favoriteProducers, setFavoriteProducers] = useState(null);
+    const [movieRatings, setMovieRatings] = useState(null);
+    const [movieLike, setMovieLike] = useState(false);
 
 //PETICIONES PARA PELICULAS
     const getMovieList = async () => {
@@ -88,10 +90,10 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-    const getMovieReview = async (id, idu) => {
+    const getMovieReview = async (id) => {
         try {
-            const res = await GetReview(id,idu);
-            return res.data
+            const res = await GetReview(id);
+            setMovieRatings(res.data);
         } catch (error) {
             console.log(error);
         }
@@ -268,16 +270,14 @@ export const MoviesProvider = ({ children }) => {
         getGenreList()
         getDirectorList()
         getProducersList()
-    }, []);
-
-    useEffect(() => {
         if(isAuthenticated == true){
             getFavoriteMovieList(user.id)
             getFavoriteGenresList(user.id)
             getFavoriteDirectorsList(user.id)
             getFavoriteProducersList(user.id)
+            getMovieReview(user.id)
         }
-    },[isAuthenticated])
+    }, [isAuthenticated]);
 
     return (
         <MoviesContext.Provider value={{
@@ -301,6 +301,8 @@ export const MoviesProvider = ({ children }) => {
             getFavoriteDirectorsList,
             getFavoriteProducersList,
             favoriteMovies,
+            movieLike,
+            setMovieLike,
             favoriteGenres,
             favoriteDirectors,
             favoriteProducers,
@@ -311,7 +313,7 @@ export const MoviesProvider = ({ children }) => {
             delFavGenre,
             delFavDirector,
             AddMovieReview,
-            getMovieReview,
+            movieRatings,
         }}>
             {children}
         </MoviesContext.Provider>

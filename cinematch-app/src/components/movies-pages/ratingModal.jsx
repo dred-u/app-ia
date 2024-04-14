@@ -1,5 +1,5 @@
-import { React, useState } from 'react';
-import { View, Text, Modal, StyleSheet, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Modal, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RadioForm from 'react-native-simple-radio-button';
 import { useAuth } from '../../authContext';
@@ -10,6 +10,7 @@ const RatingModal = ({ isVisible, onClose, id }) => {
     const { AddMovieReview } = useMovies();
     const [selectedOption, setSelectedOption] = useState(1);
     const [isSent, setIsSent] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // Nuevo estado para controlar el estado de carga
 
     var radio_props = [
         { label: '1', value: 1 },
@@ -29,14 +30,22 @@ const RatingModal = ({ isVisible, onClose, id }) => {
     };
     
     const sendRating = () => {
+        setIsLoading(true); // Activar estado de carga
         const data = {
             pelicula: id,
             usuario: user.id,
             rating: selectedOption
           };
-          console.log(data);
           AddMovieReview(data)
-          setIsSent(true);
+          .then(() => {
+            setIsSent(true);
+          })
+          .catch((error) => {
+            console.error('Error al enviar la calificación:', error);
+          })
+          .finally(() => {
+            setIsLoading(false); // Desactivar estado de carga después de completar la acción
+          });
     };
 
     return (
@@ -70,14 +79,17 @@ const RatingModal = ({ isVisible, onClose, id }) => {
                             animation={true}
                             onPress={(value) => { handlePress(value) }}
                         />
-                        <Pressable onPress={sendRating} style={styles.sendButton}>
-                            <Text style={styles.buttonText}>Enviar</Text>
-                        </Pressable>
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color="#FEBC14" />
+                        ) : (
+                            <Pressable onPress={sendRating} style={styles.sendButton}>
+                                <Text style={styles.buttonText}>Enviar</Text>
+                            </Pressable>
+                        )}
                     </View>
                 ) : (
                     <View style={styles.thankYouContainer}>
                         <Text style={styles.thankYouText}>¡Gracias por tu calificación!</Text>
-
                     </View>
                 )}
             </View>

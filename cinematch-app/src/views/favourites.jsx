@@ -1,19 +1,33 @@
-import React, { useState } from 'react'
-import { Platform, TouchableOpacity ,View, Text, StyleSheet } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Platform, Pressable ,View, Text, StyleSheet } from 'react-native'
 import Movies_page from '../components/movies-pages/movies-page';
 import Directors_page from '../components/movies-pages/directors-page';
 import Producer_page from '../components/movies-pages/producer-page';
 import Genre_page from '../components/movies-pages/genres-page';
 
 import { useMovies } from '../moviesContext';
+import { useAuth } from '../authContext';
 
 export default function Movies() {
-  const { favoriteMovies, favoriteGenres, favoriteDirectors, favoriteProducers} = useMovies(); 
+  const { favoriteMovies, favoriteGenres, favoriteDirectors, favoriteProducers,
+          getFavoriteMovieList, movieLike, setMovieLike} = useMovies(); 
+  const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState('Movies');
 
-  const moviesArray = favoriteMovies.map(item => item.pelicula);
-  const genresArray = favoriteGenres.map(item => item.genero);
-  const directorsArray = favoriteDirectors.map(item => item.director);
+ // Verificar si los arrays de favoritos son nulos antes de mapearlos
+ const moviesArray = favoriteMovies ? favoriteMovies.map(item => item.pelicula) : [];
+ const genresArray = favoriteGenres ? favoriteGenres.map(item => item.genero) : [];
+ const directorsArray = favoriteDirectors ? favoriteDirectors.map(item => item.director) : [];
+ const producersArray = favoriteProducers ? favoriteProducers.map(item => item.productora) : [];
+ 
+
+  useEffect(() => {
+    if(movieLike == true){
+      getFavoriteMovieList(user.id)
+      setMovieLike(false)
+  }
+  },[movieLike])
+
 
   const renderPage = () => {
     if (currentPage === 'Movies') {
@@ -21,7 +35,7 @@ export default function Movies() {
     } else if (currentPage === 'Directors') {
       return <Directors_page list={directorsArray} />;
     } else if (currentPage === 'Producers') {
-      return <Producer_page list={favoriteProducers} />;
+      return <Producer_page list={producersArray} />;
     } else if (currentPage === 'Genres') {
       return <Genre_page list={genresArray} />;
     }
@@ -34,29 +48,29 @@ export default function Movies() {
       </View>
 
       <View style={styles.button_container}>
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Movies' && styles.active_button]}
           onPress={() => setCurrentPage('Movies')}>
           <Text style={styles.button_text}>Películas</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Genres' && styles.active_button]}
           onPress={() => setCurrentPage('Genres')}>
           <Text style={styles.button_text}>Generos</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Directors' && styles.active_button]}
           onPress={() => setCurrentPage('Directors')}>
           <Text style={styles.button_text}>Directores</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.button, currentPage === 'Producers' && styles.active_button]}
           onPress={() => setCurrentPage('Producers')}>
           <Text style={styles.button_text}>Productoras</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {renderPage()}

@@ -26,24 +26,16 @@ export default function Directors_page({ list }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!list || list.length === 0) {
+    if (!list) {
       const timer = setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
-      
+      }, 200);
+
       return () => clearTimeout(timer);
     } else {
       setIsLoading(false);
     }
   }, [list]);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#ffffff" />
-      </View>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -62,10 +54,10 @@ export default function Directors_page({ list }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.director_list}>
+    <ScrollView contentContainerStyle={styles.director_list} removeClippedSubviews={true}>
       {list.map((director, index) => (
         <TouchableOpacity onPress={() => handlePress(director)} key={index}>
-          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${director.foto}` : '../../../assets/img/user.jpg' }} style={{
+          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${director.foto}` : 'https://image.jimcdn.com/app/cms/image/transf/dimension=640x1024:format=jpg/path/s5044ce942026e8f2/image/ifcd5c51461c2dc3d/version/1628532290/image.jpg' }} style={{
             ...styles.image,
             width: Platform.select({
               android: 85.71,
@@ -113,13 +105,13 @@ const styles = StyleSheet.create({
     borderRadius: 80,
   },
   loadingContainer: {
-    height:'100%',
+    height: '100%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
-    height:'80%',
+    height: '80%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

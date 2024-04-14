@@ -10,25 +10,17 @@ export default function Producer_page({ list }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!list || list.length === 0) {
-          const timer = setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
-          
-          return () => clearTimeout(timer);
+        if (!list) {
+            const timer = setTimeout(() => {
+                setIsLoading(false);
+            }, 200);
+
+            return () => clearTimeout(timer);
         } else {
-          setIsLoading(false);
+            setIsLoading(false);
         }
         console.log(list);
-      }, [list]);
-    
-      if (isLoading) {
-        return (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#ffffff" />
-          </View>
-        );
-      }
+    }, [list]);
 
     if (isLoading) {
         return (
@@ -47,7 +39,7 @@ export default function Producer_page({ list }) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.producer_list}>
+        <ScrollView contentContainerStyle={styles.producer_list} removeClippedSubviews={true}>
             {list.map((producer, index) => (
 
                 <View key={index} style={styles.container}>

@@ -64,10 +64,9 @@ export default function DirectorDetails({ route }) {
   return (
     <SafeAreaView style={styles.content}>
       <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Icon name='chevron-left' size={30} color='white' />
+        <Icon name='chevron-left' size={35} color='white' />
       </Pressable>
       <View style={styles.top}>
-
 
         <View style={{ flexDirection: 'column', alignItems: 'center' }}>
           <Image source={{ uri: object.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${object.foto}` : 'https://image.jimcdn.com/app/cms/image/transf/dimension=640x1024:format=jpg/path/s5044ce942026e8f2/image/ifcd5c51461c2dc3d/version/1628532290/image.jpg'}}
@@ -103,23 +102,22 @@ export default function DirectorDetails({ route }) {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: '#2E2E2E',
-    width: '100%',
-    height: '100%',
-    padding: 40,
+    height: '95%',
   },
   top: {
-    marginTop: 40,
+
     paddingBottom: 10,
     marginHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     borderBottomWidth: 2,
     borderBottomColor: '#A2A9B2'
   },
   backButton: {
     borderRadius: 10,
     marginRight: 'auto',
-    marginTop: 10,
+    marginTop: 30,
     marginLeft: 10,
   },
   icon: {

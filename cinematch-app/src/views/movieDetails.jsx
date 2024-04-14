@@ -9,8 +9,8 @@ import RatingModal from '../components/movies-pages/ratingModal';
 export default function MovieDetails({ route }) {
   const navigation = useNavigation();
   const { object } = route.params;
-  const { getGenres, getProviders, getDirectors, getMovieReview,
-          getProducers, favoriteMovies, addFavMovie, delFavMovie } = useMovies();
+  const { getGenres, getProviders, getDirectors, movieRatings,
+          getProducers, favoriteMovies, addFavMovie, delFavMovie, setMovieLike, movieLike } = useMovies();
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isRated, setIsRated] = useState(false);
@@ -21,23 +21,26 @@ export default function MovieDetails({ route }) {
   const [producers, setProducers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favoriteID, setFavoriteID] = useState(null);
+  const [rate, setRate] = useState(null);
 
-  const toggleLike = () => {
+  const data = {
+    pelicula: object.id_pelicula,
+    usuario: user.id
+  };
+  
+  const toggleLike = async () => {
     if (isLiked) {
       delFavMovie(favoriteID);
     } else {
-      const data = {
-        pelicula: object.id_pelicula,
-        usuario: user.id
-      };
       addFavMovie(data);
     }
-
     setIsLiked(!isLiked);
+    setMovieLike(!movieLike);
   };
 
   const toggleRating = () => {
     setModalVisible(!isModalVisible);
+    setIsRated(true);
   };
 
   useEffect(() => {
@@ -46,24 +49,35 @@ export default function MovieDetails({ route }) {
       prov = await getProviders(object.id_pelicula);
       dir = await getDirectors(object.id_pelicula);
       prod = await getProducers(object.id_pelicula);
-      setGenre(gen);
+
+      setGenre(gen.slice(0, 2));
       setProviders(prov);
       setDirectors(dir);
-      setProducers(prod);
+      setProducers(prod.slice(0, 2));
       setLoading(false);
     };
-
+    
     if (favoriteMovies) {
-      for (let i = 0; i < favoriteMovies.length; i++) {
-        if (favoriteMovies[i].pelicula.id_pelicula === object.id_pelicula) {
+      let favoriteMovie = favoriteMovies.find(item => item.pelicula.id_pelicula === object.id_pelicula);
+        if (favoriteMovie) {
           setIsLiked(true);
-          setFavoriteID(favoriteMovies[i].id_fPelicula);
-          break;
-        }
+          setFavoriteID(favoriteMovie.id_fPelicula);
       }
     }
+
+    const fetchMovieRatings = async () => {
+      if (movieRatings) {
+        let ratedMovie = movieRatings.find(item => item.pelicula.id_pelicula === object.id_pelicula);
+        if (ratedMovie) {
+          setIsRated(true);
+          setRate(ratedMovie.rating);
+        }
+      }
+    };
+
     fetchData();
-  }, [object.id_pelicula]);
+    fetchMovieRatings();
+  }, []);
 
 
   if (loading) {
@@ -98,7 +112,7 @@ export default function MovieDetails({ route }) {
                   onPress={toggleRating}
                   style={[styles.ratingButton, { backgroundColor: isRated ? '#ffffff' : 'rgba(255, 255, 255, 0)' }]}
                 >
-                  <Text style={{ fontSize: 15, fontWeight: 'bold', color: isRated ? '#000000' : '#ffffff' }}>Calificar</Text>
+                  <Text style={{ fontSize: 15, fontWeight: 'bold', color: isRated ? '#000000' : '#ffffff' }}>{isRated? rate:'Calificar'} </Text>
                   <Icon name={isRated ? 'star' : 'star-outline'} size={30} color={isRated ? '#000000' : '#ffffff'} />
                 </Pressable>
               </View>

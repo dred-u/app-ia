@@ -52,4 +52,4 @@ export const DelFavoriteProducers = async (id) => axios.delete(`${baseURL}/v1/pr
 
 //PETICION PARA RATINGS
 export const AddReview = async (datos) => axios.post(`${baseURL}/v1/rating/`, datos);
-export const GetReview = async (id,idu) => axios.post(`${baseURL}/v1/rating/?pelicula_id=${id}&user=${idu}`);
+export const GetReview = async (id) => axios.get(`${baseURL}/v1/rating/?user=${id}`);
