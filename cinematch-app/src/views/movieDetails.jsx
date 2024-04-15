@@ -10,7 +10,7 @@ export default function MovieDetails({ route }) {
   const navigation = useNavigation();
   const { object } = route.params;
   const { getGenres, getProviders, getDirectors, movieRatings,
-          getProducers, favoriteMovies, addFavMovie, delFavMovie, setMovieLike, movieLike } = useMovies();
+    getProducers, favoriteMovies, addFavMovie, delFavMovie, setMovieLike, movieLike } = useMovies();
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isRated, setIsRated] = useState(false);
@@ -27,7 +27,7 @@ export default function MovieDetails({ route }) {
     pelicula: object.id_pelicula,
     usuario: user.id
   };
-  
+
   const toggleLike = async () => {
     if (isLiked) {
       delFavMovie(favoriteID);
@@ -50,18 +50,18 @@ export default function MovieDetails({ route }) {
       dir = await getDirectors(object.id_pelicula);
       prod = await getProducers(object.id_pelicula);
 
-      setGenre(gen.length > 2 ? gen.slice(0, 2) : gen);
-      setProviders(prov.length > 2 ? prov.slice(0, 2) : prov);
-      setDirectors(dir.length > 2 ? dir.slice(0, 2) : dir);
-      setProducers(prod.length > 2 ? prod.slice(0, 2) : prod);
+      setGenre(gen && gen.length > 2 ? gen.slice(0, 2) : gen);
+      setProviders(prov && prov.length > 2 ? prov.slice(0, 2) : prov);
+      setDirectors(dir && dir.length > 2 ? dir.slice(0, 2) : dir);
+      setProducers(prod && prod.length > 2 ? prod.slice(0, 2) : prod);
       setLoading(false);
     };
-    
+
     if (favoriteMovies) {
       let favoriteMovie = favoriteMovies.find(item => item.pelicula.id_pelicula === object.id_pelicula);
-        if (favoriteMovie) {
-          setIsLiked(true);
-          setFavoriteID(favoriteMovie.id_fPelicula);
+      if (favoriteMovie) {
+        setIsLiked(true);
+        setFavoriteID(favoriteMovie.id_fPelicula);
       }
     }
 
@@ -101,9 +101,13 @@ export default function MovieDetails({ route }) {
               <Text style={styles.title}>{object.titulo}</Text>
               <Text style={styles.date}>{object.anno_estreno} • {object.duracion_minutos} minutos</Text>
               <Text style={styles.director}>Dirección:</Text>
-              {directors && directors.map(item => (
-                <Text key={item.id_pDirectores} style={styles.director_name}>{item.director.nombre}</Text>
-              ))}
+              {directors && directors.length > 0 ? (
+                directors.map(item => (
+                  <Text key={item.id_pDirectores} style={styles.director_name}>{item.director.nombre}</Text>
+                ))
+              ) : (
+                <Text style={styles.director_name}>No hay director disponible</Text>
+              )}
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <Pressable onPress={toggleLike}>
                   <Icon name={isLiked ? 'heart' : 'heart-outline'} size={30} color='white' />
@@ -112,7 +116,7 @@ export default function MovieDetails({ route }) {
                   onPress={toggleRating}
                   style={[styles.ratingButton, { backgroundColor: isRated ? '#ffffff' : 'rgba(255, 255, 255, 0)' }]}
                 >
-                  <Text style={{ fontSize: 15, fontWeight: 'bold', color: isRated ? '#000000' : '#ffffff' }}>{isRated? rate:'Calificar'} </Text>
+                  <Text style={{ fontSize: 15, fontWeight: 'bold', color: isRated ? '#000000' : '#ffffff' }}>{isRated ? rate : 'Calificar'} </Text>
                   <Icon name={isRated ? 'star' : 'star-outline'} size={30} color={isRated ? '#000000' : '#ffffff'} />
                 </Pressable>
               </View>
@@ -125,14 +129,22 @@ export default function MovieDetails({ route }) {
         <View style={styles.details}>
           <Text style={{ color: '#ffffff', fontWeight: '700', fontSize: 16 }}>DETALLES</Text>
           <Text style={styles.label}>Genero</Text>
-          {genre && genre.map(item => (
-            <Text key={item.id_pGeneros} style={styles.details_label}>{item.genero.nombre}</Text>
-          ))}
+          {genre && genre.length > 0 ? (
+            genre.map(item => (
+              <Text key={item.id_pGeneros} style={styles.details_label}>{item.genero.nombre}</Text>
+            ))
+          ) : (
+            <Text style={styles.details_label}>No disponible</Text>
+          )}
 
           <Text style={styles.label}>Productora</Text>
-          {producers && producers.map(item => (
-            <Text key={item.id_pProductoras} style={styles.details_label}>{item.productora.nombre}</Text>
-          ))}
+          {producers && producers.length > 0 ? (
+            producers.map(item => (
+              <Text key={item.id_pProductoras} style={styles.details_label}>{item.productora.nombre}</Text>
+            ))
+          ) : (
+            <Text style={styles.details_label}>No disponible</Text>
+          )}
           <Text style={styles.label}>Disponible en:</Text>
           <View style={{ flexDirection: 'row' }}>
             {providers ? (
@@ -146,7 +158,7 @@ export default function MovieDetails({ route }) {
                 </React.Fragment>
               ))
             ) : (
-              <Text style={styles.details_label}>No disponible aun en algun servicio</Text>
+              <Text style={styles.details_label}>No disponible aún en algún servicio</Text>
             )}
           </View>
         </View>

@@ -12,10 +12,10 @@
         {
           "fonts": [
             {
-              "asset":"./assets/fonts/Bungee-Regular.ttf"
+              "asset": "./assets/fonts/Bungee-Regular.ttf"
             },
             {
-              "asset":"./assets/fonts/OpenSans-VariableFont_wdth,wght.ttf"
+              "asset": "./assets/fonts/OpenSans-VariableFont_wdth,wght.ttf"
             }
           ]
         }
@@ -41,10 +41,16 @@
         "networking": {
           "debugger": true
         }
-      }
+      },
+      "package": "com.dred_u.Cinematch"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "03083002-7b07-4311-830d-64ab59ea904c"
+      }
     }
   }
 }
