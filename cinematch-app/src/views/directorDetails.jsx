@@ -102,7 +102,7 @@ export default function DirectorDetails({ route }) {
 const styles = StyleSheet.create({
   content: {
     backgroundColor: '#2E2E2E',
-    height: '95%',
+    height: '100%',
   },
   top: {
 

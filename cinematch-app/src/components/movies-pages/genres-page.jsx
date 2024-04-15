@@ -1,14 +1,15 @@
-import { React, useEffect, useState } from 'react'
-import { TouchableOpacity, Dimensions, Text, ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity, Dimensions, Text, ScrollView, StyleSheet, ActivityIndicator, View, TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
 const PAGE_WIDTH = Dimensions.get('window').width * 0.39;
 
-export default function Genre_page({ list }) {
+export default function GenrePage({ list }) {
   const navigation = useNavigation();
-
   const [colors, setColors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredGenres, setFilteredGenres] = useState([]);
 
   useEffect(() => {
     generateColors();
@@ -59,8 +60,23 @@ export default function Genre_page({ list }) {
       return () => clearTimeout(timer);
     } else {
       setIsLoading(false);
+      setFilteredGenres(list);
     }
   }, [list]);
+
+  // Filtrar películas cuando el término de búsqueda cambia
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      // Si no hay término de búsqueda, mostramos todas las películas
+      setFilteredGenres(list);
+    } else {
+      // Filtramos las películas según el término de búsqueda
+      const filtered = list.filter(genre =>
+        genre.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredGenres(filtered);
+    }
+  }, [searchTerm, list]);
 
   if (isLoading) {
     return (
@@ -79,31 +95,50 @@ export default function Genre_page({ list }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.genre_list} removeClippedSubviews={true}>
-      {list.map((genre, index) => (
-        <TouchableOpacity onPress={() => handlePress(genre)} key={index}>
-          <LinearGradient
-            colors={colors[index]}
-            style={[styles.container]}
-          >
-            <Text style={styles.title}>{genre.nombre}</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar generos..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
+      <ScrollView contentContainerStyle={styles.genre_list} removeClippedSubviews={true}>
+        {filteredGenres.map((genre, index) => (
+          <TouchableOpacity onPress={() => handlePress(genre)} key={index}>
+            <LinearGradient
+              colors={colors[index]}
+              style={[styles.genreContainer]}
+            >
+              <Text style={styles.title}>{genre.nombre}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   genre_list: {
-    marginTop: 20,
     marginHorizontal: 20,
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingBottom: 75,
     justifyContent: 'center',
   },
-  container: {
+  searchInput: {
+    padding: 8,
+    margin: 8,
+    marginHorizontal:20,
+    backgroundColor: '#fff',
+    fontSize: 16,
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  genreContainer: {
     width: PAGE_WIDTH,
     height: 100,
     padding: 10,
@@ -118,14 +153,12 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   loadingContainer: {
-    height: '100%',
-    width: '100%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
-    height: '80%',
-    width: '100%',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

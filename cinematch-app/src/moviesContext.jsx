@@ -1,14 +1,15 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { GetMovies, GetMovieGenres, GetMovieProviders, 
-         GetMovieProducer, GetMovieDirector,
-         GetGenres, GetGenreMovies,
-         GetDirectors,GetDirectorMovies,
-         GetProducers, GetProducerMovies,
-         GetFavoriteMovies,GetFavoriteDirectors, GetFavoriteGenres, GetFavoriteProducers,
-         AddFavoriteGenres, AddFavoriteMovies, AddFavoriteDirectors,
-         DelFavoriteGenres, DelFavoriteMovies, DelFavoriteDirectors,
-         AddFavoriteProducers, DelFavoriteProducers,
-         AddReview, GetReview
+import {
+    GetMovies, GetMovieGenres, GetMovieProviders,
+    GetMovieProducer, GetMovieDirector,
+    GetGenres, GetGenreMovies,
+    GetDirectors, GetDirectorMovies,
+    GetProducers, GetProducerMovies,
+    GetFavoriteMovies, GetFavoriteDirectors, GetFavoriteGenres, GetFavoriteProducers,
+    AddFavoriteGenres, AddFavoriteMovies, AddFavoriteDirectors,
+    DelFavoriteGenres, DelFavoriteMovies, DelFavoriteDirectors,
+    AddFavoriteProducers, DelFavoriteProducers,
+    AddReview, GetReview, GetRecomendationMovies, GetRecomendationGenres, GetRecomendationProviders
 } from "./services/moviesService";
 import { useAuth } from './authContext';
 
@@ -24,7 +25,7 @@ export const useMovies = () => {
 
 //PETICIONES PARA PELICULAS
 export const MoviesProvider = ({ children }) => {
-    const { user, isAuthenticated } = useAuth(); 
+    const { user, isAuthenticated } = useAuth();
     const [movies, setMovies] = useState(null);
     const [genres, setGenres] = useState(null);
     const [directors, setDirectors] = useState(null);
@@ -38,8 +39,12 @@ export const MoviesProvider = ({ children }) => {
     const [genreLike, setGenreLike] = useState(false);
     const [directorLike, setDirectorLike] = useState(false);
     const [producerLike, setProducerLike] = useState(false);
+    const [movieRecomendations, setMovieRecomendations] = useState(null);
+    const [movieGenreRecomendations, setMovieGenreRecomendations] = useState(null);
+    const [movieProvidersRecomendations, setMovieProvidersRecomendations] = useState(null);
+    const [name, setName] = useState(null);
 
-//PETICIONES PARA PELICULAS
+    //PETICIONES PARA PELICULAS
     const getMovieList = async () => {
         try {
             const res = await GetMovies();
@@ -103,7 +108,7 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-//PETICIONES PARA GENEROS
+    //PETICIONES PARA GENEROS
     const getGenreList = async () => {
         try {
             const res = await GetGenres();
@@ -112,7 +117,7 @@ export const MoviesProvider = ({ children }) => {
             console.log(error);
         }
     };
-    
+
     const getGenMovies = async (id) => {
         try {
             const res = await GetGenreMovies(id);
@@ -122,7 +127,7 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-//PETICIONES PARA DIRECTORES
+    //PETICIONES PARA DIRECTORES
     const getDirectorList = async () => {
         try {
             const res = await GetDirectors();
@@ -141,7 +146,7 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-//PETICIONES PARA PRODUCTORES
+    //PETICIONES PARA PRODUCTORES
     const getProducersList = async () => {
         try {
             const res = await GetProducers();
@@ -160,7 +165,7 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-//PETICIONES PARA FAVORITAS
+    //PETICIONES PARA FAVORITAS
     const getFavoriteMovieList = async (id) => {
         try {
             const res = await GetFavoriteMovies(id);
@@ -285,21 +290,71 @@ export const MoviesProvider = ({ children }) => {
             console.log(error);
         }
     };
- 
+
+    const getMovieRecomendations = async (id) => {
+        try {
+            const res = await GetRecomendationMovies(id);
+            setMovieRecomendations(res.data.recomendaciones)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getMovieGenreRecomendations = async (id, idg) => {
+        try {
+            const res = await GetRecomendationGenres(id, idg);
+            setMovieGenreRecomendations(res.data.recomendaciones)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getMovieProvidersRecomendations = async (id) => {
+        try {
+            const res = await GetRecomendationProviders(id);
+            setMovieProvidersRecomendations(res.data.recomendaciones)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // Cargar datos de usuario al iniciar la aplicación
     useEffect(() => {
         getMovieList()
         getGenreList()
         getDirectorList()
         getProducersList()
-        if(isAuthenticated == true){
+        if (isAuthenticated == true) {
             getFavoriteMovieList(user.id)
             getFavoriteGenresList(user.id)
             getFavoriteDirectorsList(user.id)
             getFavoriteProducersList(user.id)
             getMovieReview(user.id)
+            getMovieRecomendations(user.id)
+            getMovieProvidersRecomendations(user.id)
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (favoriteGenres) {
+            const randomIndex = Math.floor(Math.random() * favoriteGenres.length);
+            const randomGenre = favoriteGenres[randomIndex];
+            const randomGenreId = randomGenre.genero.id_genero;
+            const nameG = randomGenre.genero.nombre;
+            getMovieGenreRecomendations(user.id, randomGenreId);
+            setName(nameG)
+        }
+        if (genres) {
+            const randomIndex = Math.floor(Math.random() * genres.length);
+            const randomGenre = genres[randomIndex];
+            const randomGenreId = randomGenre.id_genero;
+            const nameG = randomGenre.nombre;
+            getMovieGenreRecomendations(user.id, randomGenreId);
+            setName(nameG)
+        }
+    }, [favoriteGenres, genres]);
+
+
 
     return (
         <MoviesContext.Provider value={{
@@ -326,13 +381,13 @@ export const MoviesProvider = ({ children }) => {
             movieLike,
             setMovieLike,
             favoriteGenres,
-            genreLike, 
-            setGenreLike, 
+            genreLike,
+            setGenreLike,
             favoriteDirectors,
-            directorLike, 
-            setDirectorLike, 
+            directorLike,
+            setDirectorLike,
             favoriteProducers,
-            producerLike, 
+            producerLike,
             setProducerLike,
             addFavMovie,
             addFavGenre,
@@ -344,6 +399,12 @@ export const MoviesProvider = ({ children }) => {
             delFavProducer,
             AddMovieReview,
             movieRatings,
+            getMovieRecomendations,
+            movieRecomendations,
+            getMovieGenreRecomendations,
+            movieGenreRecomendations,
+            name,
+            movieProvidersRecomendations
         }}>
             {children}
         </MoviesContext.Provider>

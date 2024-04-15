@@ -1,9 +1,11 @@
 import { React, useEffect, useState } from 'react'
-import { Platform, ScrollView, View, ActivityIndicator, StyleSheet, Text } from 'react-native'
+import { Platform, ScrollView, View, ActivityIndicator, StyleSheet, Text, TextInput } from 'react-native'
 import MoviePoster from '../../components/poster-cover'
 
 export default function Movies_page({ list }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredMovies, setFilteredMovies] = useState([]);
 
   useEffect(() => {
     if (!list) {
@@ -14,8 +16,23 @@ export default function Movies_page({ list }) {
       return () => clearTimeout(timer);
     } else {
       setIsLoading(false);
+      setFilteredMovies(list); 
     }
   }, [list]);
+
+  // Filtrar películas cuando el término de búsqueda cambia
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      // Si no hay término de búsqueda, mostramos todas las películas
+      setFilteredMovies(list);
+    } else {
+      // Filtramos las películas según el término de búsqueda
+      const filtered = list.filter(movie =>
+        movie.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredMovies(filtered);
+    }
+  }, [searchTerm, list]);
 
   if (isLoading) {
     return (
@@ -34,28 +51,44 @@ export default function Movies_page({ list }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.movie_list} removeClippedSubviews={true}>
-      {list.map((movie, index) => (
-        <MoviePoster
-          key={index}
-          object={movie}
-        />
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar películas..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
+      <ScrollView contentContainerStyle={styles.movie_list} removeClippedSubviews={true}>
+        {filteredMovies.map((movie, index) => (
+          <MoviePoster
+            key={index}
+            object={movie}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+
+  },
   movie_list: {
-    marginTop: 20,
     marginHorizontal: 20,
     flexDirection: 'row',
-    alignItems: 'center',
     flexWrap: 'wrap',
-    justifyContent: Platform.select({
-      web: 'flex-start',
-    }),
     paddingBottom: 75,
+    justifyContent: 'center',
+  },
+  searchInput: {
+    padding: 8,
+    margin: 8,
+    backgroundColor: '#fff',
+    fontSize: 16,
+    borderWidth: 1,
+    borderRadius: 5,
   },
   loadingContainer: {
     height: '100%',

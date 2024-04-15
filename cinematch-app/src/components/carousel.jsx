@@ -58,7 +58,7 @@ function Parallax({list}) {
             scrollAnimationDuration={1000}
             renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item)} style={{flex: 1,  flexDirection: "row" }}>
-                    <Image style={styles.img} source={{ uri: `https://image.tmdb.org/t/p/original/${item.img}` }} />
+                    <Image style={styles.img} source={{ uri: `https://image.tmdb.org/t/p/w600_and_h900_bestv2/${item.poster}` }} />
                 </TouchableOpacity>
             )}
         /> 

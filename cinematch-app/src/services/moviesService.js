@@ -52,4 +52,12 @@ export const DelFavoriteProducers = async (id) => axios.delete(`${baseURL}/v1/pr
 
 //PETICION PARA RATINGS
 export const AddReview = async (datos) => axios.post(`${baseURL}/v1/rating/`, datos);
-export const GetReview = async (id) => axios.get(`${baseURL}/v1/rating/?user=${id}`);
+export const GetReview = async (id) => axios.get(`${baseURL}/v1/rating/?usuario_id=${id}`);
+
+//PETICIONES PARA RECOMENDACIONES
+export const GetRecomendationMovies = async (id) => axios.get(`${baseURL}/recomendaciones/${id}`);
+
+export const GetRecomendationGenres = async (id,idg) => axios.get(`${baseURL}/recomendacionesByGenero/${id}/?genero_id=${idg}`);
+
+export const GetRecomendationProviders = async (id) => axios.get(`${baseURL}/recomendacionesByProvedores/${id}`);
+

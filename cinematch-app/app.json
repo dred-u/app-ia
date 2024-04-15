@@ -10,14 +10,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            {
-              "asset": "./assets/fonts/Bungee-Regular.ttf"
-            },
-            {
-              "asset": "./assets/fonts/OpenSans-VariableFont_wdth,wght.ttf"
-            }
-          ]
+          "fonts": ["./assets/fonts/Bungee-Regular.ttf"]
         }
       ]
     ],
@@ -34,13 +27,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "debug": {
-        "networking": {
-          "debugger": true
-        }
+        "foregroundImage": "./assets/cinematch-logo.png",
+        "backgroundColor": "#9A0315"
       },
       "package": "com.dred_u.Cinematch"
     },

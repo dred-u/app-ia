@@ -1,12 +1,14 @@
-import { React, useEffect, useState } from 'react'
-import { Dimensions, View, Text, Image, ActivityIndicator, ScrollView, StyleSheet, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { Dimensions, View, Text, Image, ActivityIndicator, ScrollView, StyleSheet, Pressable, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const PAGE_WIDTH = Dimensions.get('window').width * 0.39;
 
-export default function Producer_page({ list }) {
+export default function ProducerPage({ list }) {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredProducers, setFilteredProducers] = useState([]);
 
     const handlePress = (object) => {
         navigation.navigate('ProducersDetails', { object });
@@ -21,8 +23,24 @@ export default function Producer_page({ list }) {
             return () => clearTimeout(timer);
         } else {
             setIsLoading(false);
+            setFilteredProducers(list);
         }
     }, [list]);
+
+    // Filtrar productoras cuando el término de búsqueda cambia
+    useEffect(() => {
+        if (searchTerm.trim() === '') {
+            // Si no hay término de búsqueda, mostramos todas las productoras
+            setFilteredProducers(list);
+        } else {
+            // Filtramos las productoras según el término de búsqueda
+            const filtered = list.filter(producer =>
+                producer.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredProducers(filtered);
+        }
+    }, [searchTerm, list]);
+
 
     if (isLoading) {
         return (
@@ -41,29 +59,45 @@ export default function Producer_page({ list }) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.producer_list} removeClippedSubviews={true}>
-            {list.map((producer, index) => (
-                <Pressable onPress={() => handlePress(producer)} key={index}>
-                <View key={index} style={styles.container}>
-                    <Image source={{ uri: `https://image.tmdb.org/t/p/original${producer.logo}` }} style={styles.image} />
-
-                </View>
-                </Pressable >
-            ))}
-        </ScrollView>
+        <View style={styles.container}>
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar productoras..."
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+            />
+            <ScrollView contentContainerStyle={styles.producerList} removeClippedSubviews={true}>
+                {filteredProducers.map((producer, index) => (
+                    <Pressable onPress={() => handlePress(producer)} key={index}>
+                        <View style={styles.producerContainer} key={index}>
+                            <Image source={{ uri: `https://image.tmdb.org/t/p/original${producer.logo}` }} style={styles.image} />
+                        </View>
+                    </Pressable >
+                ))}
+            </ScrollView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    producer_list: {
-        marginTop: 20,
+    producerList: {
         marginHorizontal: 20,
         flexDirection: 'row',
         flexWrap: 'wrap',
         paddingBottom: 75,
         justifyContent: 'center',
     },
-    container: {
+    searchInput: {
+        padding: 8,
+        margin: 8,
+        marginHorizontal: 20,
+        backgroundColor: '#fff',
+
+        fontSize: 16,
+        borderWidth: 1,
+        borderRadius: 5,
+    },
+    producerContainer: {
         width: PAGE_WIDTH,
         height: 150,
         padding: 10,
@@ -74,7 +108,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        justifyContent: 'flex-end',
         resizeMode: 'contain',
         width: '100%',
         height: '95%',
@@ -95,5 +128,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#ffffff',
     },
-
 });

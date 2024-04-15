@@ -18,7 +18,7 @@ export default function Profile({navigation}) {
     <View style={styles.container_body}>
       <View style={styles.fy_space}>
         <Text style={styles.title}>Perfil</Text>
-        <Icon name='pencil' color='#FEBC14' size={30} style={styles.edit_pencil}></Icon>
+        <Icon name='pencil' color='#2E2E2E' size={30} style={styles.edit_pencil}></Icon>
       </View>
 
       <View style={styles.profile_content}>

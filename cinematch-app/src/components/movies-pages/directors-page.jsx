@@ -1,29 +1,19 @@
-import { React, useEffect, useState } from 'react'
-import { Platform, Dimensions, TouchableOpacity, Text, ImageBackground, ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { Platform, TouchableOpacity, Text, ImageBackground, ScrollView, StyleSheet, ActivityIndicator, View, TextInput, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-const screenDim = Dimensions.get('window')
-let screenWidth = null;
-let screenHeight = null;
+const PAGE_WIDTH = Dimensions.get('window').width * 0.39;
 
-if (screenDim.width <= 898) {
-  screenWidth = 120;
-  screenHeight = 180;
-}
-else {
-  screenWidth = 212;
-  screenHeight = 318;
-}
-
-export default function Directors_page({ list }) {
+export default function DirectorsPage({ list }) {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredDirectors, setFilteredDirectors] = useState([]);
 
   const handlePress = (object) => {
     navigation.navigate('DirectorDetails', { object });
   };
-
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!list) {
@@ -34,8 +24,24 @@ export default function Directors_page({ list }) {
       return () => clearTimeout(timer);
     } else {
       setIsLoading(false);
+      setFilteredDirectors(list);
     }
   }, [list]);
+
+  // Filtrar películas cuando el término de búsqueda cambia
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      // Si no hay término de búsqueda, mostramos todas las películas
+      setFilteredDirectors(list);
+    } else {
+      // Filtramos las películas según el término de búsqueda
+      const filtered = list.filter(producer =>
+        producer.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredDirectors(filtered);
+    }
+  }, [searchTerm, list]);
+
 
   if (isLoading) {
     return (
@@ -54,51 +60,62 @@ export default function Directors_page({ list }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.director_list} removeClippedSubviews={true}>
-      {list.map((director, index) => (
-        <TouchableOpacity onPress={() => handlePress(director)} key={index}>
-          <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${director.foto}` : 'https://image.jimcdn.com/app/cms/image/transf/dimension=640x1024:format=jpg/path/s5044ce942026e8f2/image/ifcd5c51461c2dc3d/version/1628532290/image.jpg' }} style={{
-            ...styles.image,
-            width: Platform.select({
-              android: 85.71,
-              web: screenWidth
-            }),
-            height: Platform.select({
-              android: 128.57,
-              web: screenHeight
-            }),
-          }}>
-            <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,1)']} style={{ paddingTop: 10 }}>
-              <Text style={styles.director_name}>{director.nombre}</Text>
-            </LinearGradient>
-          </ImageBackground>
-        </TouchableOpacity >
-      ))}
-    </ScrollView>
+    <View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar directores..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
+      <ScrollView contentContainerStyle={styles.directorList} removeClippedSubviews={true}>
+        {filteredDirectors.map((director, index) => (
+          <TouchableOpacity onPress={() => handlePress(director)} key={index}>
+            <ImageBackground source={{ uri: director.foto ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${director.foto}` : 'https://image.jimcdn.com/app/cms/image/transf/dimension=640x1024:format=jpg/path/s5044ce942026e8f2/image/ifcd5c51461c2dc3d/version/1628532290/image.jpg' }} style={{
+              ...styles.image,
+              width: Platform.select({
+                android: 85.71,
+                web: PAGE_WIDTH
+              }),
+              height: Platform.select({
+                android: 128.57,
+                web: PAGE_WIDTH * 1.5
+              }),
+            }}>
+              <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,1)']} style={{ paddingTop: 10 }}>
+                <Text style={styles.directorName}>{director.nombre}</Text>
+              </LinearGradient>
+            </ImageBackground>
+          </TouchableOpacity >
+        ))}
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  director_list: {
-    marginTop: 20,
+  directorList: {
     marginHorizontal: 20,
     flexDirection: 'row',
-    alignItems: 'center',
     flexWrap: 'wrap',
-    justifyContent: Platform.select({
-      web: 'flex-start',
-    }),
     paddingBottom: 75,
+    justifyContent: 'center',
   },
+  searchInput: {
+    padding: 8,
+    margin: 8,
+    marginHorizontal: 20,
+    backgroundColor: '#fff',
 
-  director_name: {
+    fontSize: 16,
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  directorName: {
     color: 'white',
-    fontSize: Platform.select({
-      android: 12
-    }),
-    fontWeight: 'bold'
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
-
   image: {
     margin: 1,
     justifyContent: 'flex-end',

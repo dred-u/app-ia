@@ -1,38 +1,51 @@
-import { React,  useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Dimensions, ScrollView, StyleSheet, View, Text, Platform, ActivityIndicator } from "react-native";
-
 import Carousel from '../components/carousel';
 import Movie_list from '../components/movie-list';
-
-import { items2, items3 } from '../components/carousel-elements';
+import { useMovies } from '../moviesContext';
 
 const PAGE_HEIGHT = Dimensions.get('window').height;
 
 export default function HomeScreen() {
+  const { movieGenreRecomendations, movieRecomendations, name, movieProvidersRecomendations } = useMovies();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verifica si la lista es nula o esta vacia
-  if (!items2 || items2.length === 0) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  // UseEffect para cambiar el estado de carga una vez que los datos estén listos
+  useEffect(() => {
+    if (movieRecomendations && movieRecomendations.length > 0) {
+      setIsLoading(false);
+    }
+  }, [movieRecomendations]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container_body}>
-      <View style={styles.fy_space}>
-        <Text style={styles.title}>
-          Para ti
-        </Text>
-
-        <View style={styles.carousel_container}>
-          <Carousel list={items2} />
-          <Movie_list list={items3} title={"Recomendadas"} />
-          <Movie_list list={items2} title={"De tus generos favoritos"} />
+    <ScrollView contentContainerStyle={styles.container_body} removeClippedSubviews={true}>
+      {isLoading ? (
+        // Muestra un indicador de carga mientras los datos están siendo cargados
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#ffffff" />
         </View>
-      </View>
+      ) : (
+        // Una vez que los datos estén listos, renderiza el contenido normal
+        <View style={styles.fy_space}>
+          <Text style={styles.title}>
+            Para ti
+          </Text>
+
+          <View style={styles.carousel_container}>
+            <Carousel list={movieRecomendations} />
+            {movieProvidersRecomendations && movieProvidersRecomendations.length > 0 ? (
+              <Movie_list list={movieProvidersRecomendations} title={"Lo mas popular"} />
+            ) : (
+              <View></View>
+            )}
+            {movieGenreRecomendations && movieGenreRecomendations.length > 0 ? (
+              <Movie_list list={movieGenreRecomendations} title={name} />
+            ) : (
+              <View></View>
+            )}
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -43,7 +56,6 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-
   fy_space: {
     marginTop: 20,
     marginLeft: 40,
@@ -52,7 +64,6 @@ const styles = StyleSheet.create({
       web: '100%'
     })
   },
-
   title: {
     color: '#ffffff',
     fontSize: Platform.select({
@@ -61,11 +72,16 @@ const styles = StyleSheet.create({
     }),
     fontWeight: 'bold',
   },
-
   loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
     height: '100%',
     width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  none: { 
+    color: 'white', 
+    fontSize: 20, 
+    marginTop: 10, 
+    textAlign:'center' 
+  }
 });
