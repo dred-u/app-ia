@@ -9,7 +9,7 @@ import Movies_page from '../components/movies-pages/movies-page';
 export default function GenreDetails({ route }) {
   const navigation = useNavigation();
   const { object } = route.params;
-  const { getGenMovies, favoriteGenres, addFavGenre, delFavGenre } = useMovies();
+  const { getGenMovies, favoriteGenres, addFavGenre, delFavGenre, genreLike, setGenreLike } = useMovies();
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -25,7 +25,7 @@ export default function GenreDetails({ route }) {
       };
       addFavGenre(data);
     }
-
+    setGenreLike(!genreLike)
     setIsLiked(!isLiked);
   };
 

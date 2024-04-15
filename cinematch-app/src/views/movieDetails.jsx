@@ -50,10 +50,10 @@ export default function MovieDetails({ route }) {
       dir = await getDirectors(object.id_pelicula);
       prod = await getProducers(object.id_pelicula);
 
-      setGenre(gen.slice(0, 2));
-      setProviders(prov);
-      setDirectors(dir);
-      setProducers(prod.slice(0, 2));
+      setGenre(gen.length > 2 ? gen.slice(0, 2) : gen);
+      setProviders(prov.length > 2 ? prov.slice(0, 2) : prov);
+      setDirectors(dir.length > 2 ? dir.slice(0, 2) : dir);
+      setProducers(prod.length > 2 ? prod.slice(0, 2) : prod);
       setLoading(false);
     };
     

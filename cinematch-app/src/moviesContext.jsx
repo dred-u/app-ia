@@ -7,6 +7,7 @@ import { GetMovies, GetMovieGenres, GetMovieProviders,
          GetFavoriteMovies,GetFavoriteDirectors, GetFavoriteGenres, GetFavoriteProducers,
          AddFavoriteGenres, AddFavoriteMovies, AddFavoriteDirectors,
          DelFavoriteGenres, DelFavoriteMovies, DelFavoriteDirectors,
+         AddFavoriteProducers, DelFavoriteProducers,
          AddReview, GetReview
 } from "./services/moviesService";
 import { useAuth } from './authContext';
@@ -34,6 +35,9 @@ export const MoviesProvider = ({ children }) => {
     const [favoriteProducers, setFavoriteProducers] = useState(null);
     const [movieRatings, setMovieRatings] = useState(null);
     const [movieLike, setMovieLike] = useState(false);
+    const [genreLike, setGenreLike] = useState(false);
+    const [directorLike, setDirectorLike] = useState(false);
+    const [producerLike, setProducerLike] = useState(false);
 
 //PETICIONES PARA PELICULAS
     const getMovieList = async () => {
@@ -236,6 +240,15 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const addFavProducer = async (datos) => {
+        try {
+            const res = await AddFavoriteProducers(datos);
+            return res
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const delFavMovie = async (id) => {
         try {
             const res = await DelFavoriteMovies(id);
@@ -264,6 +277,15 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const delFavProducer = async (id) => {
+        try {
+            const res = await DelFavoriteProducers(id);
+            return res
+        } catch (error) {
+            console.log(error);
+        }
+    };
+ 
     // Cargar datos de usuario al iniciar la aplicación
     useEffect(() => {
         getMovieList()
@@ -304,14 +326,22 @@ export const MoviesProvider = ({ children }) => {
             movieLike,
             setMovieLike,
             favoriteGenres,
+            genreLike, 
+            setGenreLike, 
             favoriteDirectors,
+            directorLike, 
+            setDirectorLike, 
             favoriteProducers,
+            producerLike, 
+            setProducerLike,
             addFavMovie,
             addFavGenre,
             addFavDirector,
+            addFavProducer,
             delFavMovie,
             delFavGenre,
             delFavDirector,
+            delFavProducer,
             AddMovieReview,
             movieRatings,
         }}>

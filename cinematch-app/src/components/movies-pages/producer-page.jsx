@@ -1,13 +1,16 @@
 import { React, useEffect, useState } from 'react'
-import { Dimensions, View, Text, Image, ActivityIndicator, ScrollView, StyleSheet } from 'react-native'
+import { Dimensions, View, Text, Image, ActivityIndicator, ScrollView, StyleSheet, Pressable } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 
 const PAGE_WIDTH = Dimensions.get('window').width * 0.39;
 
 export default function Producer_page({ list }) {
     const navigation = useNavigation();
-
     const [isLoading, setIsLoading] = useState(true);
+
+    const handlePress = (object) => {
+        navigation.navigate('ProducersDetails', { object });
+    };
 
     useEffect(() => {
         if (!list) {
@@ -19,7 +22,6 @@ export default function Producer_page({ list }) {
         } else {
             setIsLoading(false);
         }
-        console.log(list);
     }, [list]);
 
     if (isLoading) {
@@ -41,12 +43,12 @@ export default function Producer_page({ list }) {
     return (
         <ScrollView contentContainerStyle={styles.producer_list} removeClippedSubviews={true}>
             {list.map((producer, index) => (
-
+                <Pressable onPress={() => handlePress(producer)} key={index}>
                 <View key={index} style={styles.container}>
                     <Image source={{ uri: `https://image.tmdb.org/t/p/original${producer.logo}` }} style={styles.image} />
 
                 </View>
-
+                </Pressable >
             ))}
         </ScrollView>
     )

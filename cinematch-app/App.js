@@ -16,6 +16,7 @@ import Profile from './src/views/profile';
 import MovieDetails from './src/views/movieDetails';
 import GenreDetails from './src/views/genreDetails';
 import DirectorDetails from './src/views/directorDetails';
+import ProducersDetails from './src/views/producersDetails';
 
 import Pages_header from './src/components/pages-header';
 
@@ -36,6 +37,7 @@ function MainStack() {
       <Stack.Screen name="MovieDetails" component={MovieDetails} options={{ headerShown: false }} />
       <Stack.Screen name="GenreDetails" component={GenreDetails} options={{ headerShown: false }} />
       <Stack.Screen name="DirectorDetails" component={DirectorDetails} options={{ headerShown: false }} />
+      <Stack.Screen name="ProducersDetails" component={ProducersDetails} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

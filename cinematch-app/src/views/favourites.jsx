@@ -10,7 +10,9 @@ import { useAuth } from '../authContext';
 
 export default function Movies() {
   const { favoriteMovies, favoriteGenres, favoriteDirectors, favoriteProducers,
-          getFavoriteMovieList, movieLike, setMovieLike} = useMovies(); 
+          getFavoriteMovieList, getFavoriteGenresList, getFavoriteDirectorsList, getFavoriteProducersList,
+          movieLike, setMovieLike, genreLike, setGenreLike, directorLike, setDirectorLike, producerLike, setProducerLike
+        } = useMovies(); 
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState('Movies');
 
@@ -26,7 +28,23 @@ export default function Movies() {
       getFavoriteMovieList(user.id)
       setMovieLike(false)
   }
-  },[movieLike])
+
+  if(genreLike == true){
+    getFavoriteGenresList(user.id)
+    setGenreLike(false)
+  }
+
+  if(directorLike == true){
+    getFavoriteDirectorsList(user.id)
+    setDirectorLike(false)
+  }
+
+  if(producerLike == true){
+    getFavoriteProducersList(user.id)
+    setProducerLike(false)
+  }
+
+  },[movieLike, genreLike,directorLike, producerLike])
 
 
   const renderPage = () => {
