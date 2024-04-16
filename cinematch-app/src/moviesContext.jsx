@@ -257,7 +257,6 @@ export const MoviesProvider = ({ children }) => {
     const delFavMovie = async (id) => {
         try {
             const res = await DelFavoriteMovies(id);
-            console.log(res.data);
             return res
         } catch (error) {
             console.log(error);
@@ -320,11 +319,11 @@ export const MoviesProvider = ({ children }) => {
 
     // Cargar datos de usuario al iniciar la aplicación
     useEffect(() => {
-        getMovieList()
-        getGenreList()
-        getDirectorList()
-        getProducersList()
-        if (isAuthenticated == true) {
+        if (user) {
+            getMovieList()
+            getGenreList()
+            getDirectorList()
+            getProducersList()
             getFavoriteMovieList(user.id)
             getFavoriteGenresList(user.id)
             getFavoriteDirectorsList(user.id)
@@ -336,7 +335,10 @@ export const MoviesProvider = ({ children }) => {
     }, [isAuthenticated]);
 
     useEffect(() => {
-        if (favoriteGenres) {
+        if (favoriteMovies && user){
+            getMovieRecomendations(user.id)
+        }
+        if (favoriteGenres && user) {
             const randomIndex = Math.floor(Math.random() * favoriteGenres.length);
             const randomGenre = favoriteGenres[randomIndex];
             const randomGenreId = randomGenre.genero.id_genero;
@@ -344,15 +346,7 @@ export const MoviesProvider = ({ children }) => {
             getMovieGenreRecomendations(user.id, randomGenreId);
             setName(nameG)
         }
-        if (genres) {
-            const randomIndex = Math.floor(Math.random() * genres.length);
-            const randomGenre = genres[randomIndex];
-            const randomGenreId = randomGenre.id_genero;
-            const nameG = randomGenre.nombre;
-            getMovieGenreRecomendations(user.id, randomGenreId);
-            setName(nameG)
-        }
-    }, [favoriteGenres, genres]);
+    }, [favoriteGenres, favoriteMovies]);
 
 
 

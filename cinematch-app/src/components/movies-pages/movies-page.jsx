@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingBottom: 75,
-    justifyContent: 'center',
+
   },
   searchInput: {
     padding: 8,

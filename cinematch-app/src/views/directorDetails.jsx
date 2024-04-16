@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   top: {
-
     paddingBottom: 10,
     marginHorizontal: 20,
     flexDirection: 'row',

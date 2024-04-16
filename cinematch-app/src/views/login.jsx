@@ -5,7 +5,7 @@ import { useAuth } from "../authContext"
 
 export default function Login({ navigation }) {
 
-  const { login, isAuthenticated, errors } = useAuth(); 
+  const { login, isAuthenticated, errors } = useAuth();
   const [formErrors, setFormErrors] = useState({}); // Guardar errores
   const [showErrors, setShowErrors] = useState(false);
 
@@ -22,7 +22,7 @@ export default function Login({ navigation }) {
   };
 
   //validar los campos antes de enviarlos
-  const isValidForm = () =>{
+  const isValidForm = () => {
     const errors = {};
 
     if (!formValues.email) {
@@ -51,12 +51,14 @@ export default function Login({ navigation }) {
       email: "",
       password: "",
     });
-  },[isAuthenticated])
+  }, [isAuthenticated])
 
   const onSubmit = async () => {
-    if(isValidForm()){
+    if (isValidForm()) {
       login(formValues)
-      navigation.navigate('Navigation')
+      if (isAuthenticated === true) {
+        navigation.navigate('Navigation')
+      }
     }
   };
 
@@ -66,19 +68,19 @@ export default function Login({ navigation }) {
       <ContainerLogo />
       <View style={styles.content}>
         {
-          errors.map((error,i) => (<Text style = {styles.error_message} key={i}>
-            {error}    
+          errors.map((error, i) => (<Text style={styles.error_message} key={i}>
+            {error}
           </Text>))
         }
 
         <View style={styles.text_subtitles}>
-        <Text style={{fontSize: 40, color: '#ffffff', fontWeight: '800'}}>
-          Iniciar Sesión
-        </Text>
+          <Text style={{ fontSize: 40, color: '#ffffff', fontWeight: '800' }}>
+            Iniciar Sesión
+          </Text>
 
-        <Text style={{ top: 5, fontSize: 15, color: '#ffffff'}}
-        >Por favor inicia sesion para continuar
-        </Text>
+          <Text style={{ top: 5, fontSize: 15, color: '#ffffff' }}
+          >Por favor inicia sesion para continuar
+          </Text>
         </View>
 
         <View style={styles.text_inputs} >
@@ -86,20 +88,20 @@ export default function Login({ navigation }) {
           <TextInput
             style={styles.input}
             autoCapitalize="none"
-            placeholder={showErrors ? formErrors.email:''} 
+            placeholder={showErrors ? formErrors.email : ''}
             value={formValues.email}
             onChangeText={(text) => handleInputChange('email', text)}
-          />       
+          />
 
           <Text style={styles.label}>Contraseña</Text>
           <TextInput
             style={styles.input}
             autoCapitalize="none"
-            placeholder={showErrors ? formErrors.password:''} 
+            placeholder={showErrors ? formErrors.password : ''}
             secureTextEntry
             value={formValues.password}
             onChangeText={(text) => handleInputChange('password', text)}
-          /> 
+          />
         </View>
 
         <TouchableOpacity onPress={onSubmit}>
@@ -107,11 +109,11 @@ export default function Login({ navigation }) {
         </TouchableOpacity>
       </View>
 
-        <TouchableOpacity style={{marginTop:10, flexDirection: 'row', justifyContent:'center'}} onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.text_register}>¿No tienes una cuenta? </Text>
-          <Text style={styles.link}>¡Regístrate!</Text>
-        </TouchableOpacity>
-      
+      <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'center' }} onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.text_register}>¿No tienes una cuenta? </Text>
+        <Text style={styles.link}>¡Regístrate!</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
@@ -129,12 +131,12 @@ const styles = StyleSheet.create({
   },
 
   text_subtitles: {
-    width:'80%'
+    width: '80%'
   },
 
   text_inputs: {
     marginTop: 20,
-    width:'80%'
+    width: '80%'
   },
 
   label: {
@@ -148,14 +150,14 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#FFFFFF',
     width: '100%',
-    fontSize:18,
+    fontSize: 18,
     height: 45,
     padding: 10,
     borderWidth: 1,
     borderRadius: 5,
   },
 
-  button:{
+  button: {
     backgroundColor: '#9A0315',
     color: '#ffffff',
     borderRadius: 10,
@@ -168,25 +170,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  text_register:{
-    fontSize:15,
+  text_register: {
+    fontSize: 15,
     color: '#ffffff',
     textDecorationLine: 'none',
     marginTop: 10,
   },
 
-  link:{
-    fontSize:15,
+  link: {
+    fontSize: 15,
     color: '#FEBC14',
     textDecorationLine: 'underline',
     marginTop: 10,
   },
-  validations:{
-    color:'red', 
-    fontSize:16, 
+  validations: {
+    color: 'red',
+    fontSize: 16,
     display: "flex",
     flexDirection: "row", // Establece la dirección a "row"
     flexWrap: "wrap",
-},
+  },
 
 })

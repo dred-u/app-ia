@@ -16,6 +16,7 @@ export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [errors, setErrors] = useState([]);
+    const [existUser,setExistUser] = useState(null);
 
     // Función para guardar el token y la información del usuario en AsyncStorage
     const saveUserDataToStorage = async (token, userData) => {
@@ -46,7 +47,11 @@ export const AuthProvider = ({children}) => {
         try {
             const res = await loginRequest(data);
             setUser(res.data.user);
-            setIsAuthenticated(true);
+            setExistUser(res.detail)
+            console.log(existUser);
+            if(!existUser){
+                setIsAuthenticated(true);
+            }
             await saveUserDataToStorage(res.data.token, res.data.user);
         }catch (error) {
             if(Array.isArray(error.response)){

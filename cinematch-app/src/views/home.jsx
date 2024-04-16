@@ -41,7 +41,11 @@ export default function HomeScreen() {
             {movieGenreRecomendations && movieGenreRecomendations.length > 0 ? (
               <Movie_list list={movieGenreRecomendations} title={name} />
             ) : (
-              <View></View>
+              <View style={{justifyContent:'center', alignItems:'center', marginTop:40, padding:20}}>
+                <Text style={{color:'white', fontSize:16}}>
+                  Aun no tienes recomendaciones, ¡sigue explorando peliculas! 
+                </Text>
+              </View>
             )}
           </View>
         </View>
