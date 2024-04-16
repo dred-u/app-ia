@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 
 from .serializer import UsuariosSerializer
@@ -27,15 +28,19 @@ def register(request):
 
 @api_view(['POST'])
 def login(request):
-    
-    user = get_object_or_404(User, email=request.data['email'])
+    try:
+        user = User.objects.get(email=request.data['email'])
+    except ObjectDoesNotExist:
+        message = "No se encontro el usuario."
+        return Response(data={"detail": message}, status=status.HTTP_404_NOT_FOUND)
     
     if not user.check_password(request.data['password']):
-        return Response({'error': 'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
+        message = "Invalid password."
+        return Response(data={"detail": message}, status=status.HTTP_400_BAD_REQUEST)
     
     token, created = Token.objects.get_or_create(user=user)
     serializer = UsuariosSerializer(instance=user)
-    return Response({"token": token.key, "user": serializer.data}, status.HTTP_200_OK)  
+    return Response({"token": token.key, "user": serializer.data}, status.HTTP_200_OK)
 
 
 @api_view(['POST'])
