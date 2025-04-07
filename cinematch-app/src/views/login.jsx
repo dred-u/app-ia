@@ -2,10 +2,15 @@ import { React, useEffect, useCallback, useState } from 'react'
 import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import ContainerLogo from '../components/container-logo';
 import { useAuth } from "../authContext"
+import { useMovies } from '../moviesContext';
 
 export default function Login({ navigation }) {
 
   const { login, isAuthenticated, errors } = useAuth();
+  const { setMovies, setGenres, setDirectors, setProducers, setProviders, 
+          setFavoriteMovies, setFavoriteGenres, setFavoriteDirectors, setFavoriteProducers, 
+          setFavoriteProviders, setMovieRatings, setMovieLike, setGenreLike, setDirectorLike, 
+          setProducerLike, setProvidersLike, setMovieRecomendations, setMovieGenreRecomendations, setMovieProvidersRecomendations } = useMovies();
   const [formErrors, setFormErrors] = useState({}); // Guardar errores
   const [showErrors, setShowErrors] = useState(false);
 
@@ -14,12 +19,12 @@ export default function Login({ navigation }) {
     password: "",
   });
 
-  const handleInputChange = (name, value) => {
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
+    const handleInputChange = (name, value) => {
+      setFormValues({
+        ...formValues,
+        [name]: value,
+      });
+    };
 
   //validar los campos antes de enviarlos
   const isValidForm = () => {
@@ -46,11 +51,37 @@ export default function Login({ navigation }) {
   }
 
   useEffect(() => {
-    if (isAuthenticated) navigation.navigate('Navigation') //Aqui se viaja a la pantalla de Inicio
-    setFormValues({
-      email: "",
-      password: "",
-    });
+    if (isAuthenticated) {
+      navigation.navigate('Navigation');
+      setFormValues({
+        email: "",
+        password: "",
+      });
+    } else {
+      const timeout = setTimeout(() => {
+        setMovies(null);
+        setGenres(null);
+        setDirectors(null);
+        setProducers(null);
+        setProviders(null);
+        setFavoriteMovies(null);
+        setFavoriteGenres(null);
+        setFavoriteDirectors(null);
+        setFavoriteProducers(null);
+        setFavoriteProviders(null);
+        setMovieRatings(null);
+        setMovieLike(false);
+        setGenreLike(false);
+        setDirectorLike(false);
+        setProducerLike(false);
+        setProvidersLike(false);
+        setMovieRecomendations(null);
+        setMovieGenreRecomendations(null);
+        setMovieProvidersRecomendations(null);
+      }, 1000); 
+
+      return () => clearTimeout(timeout);
+    }
   }, [isAuthenticated])
 
   const onSubmit = async () => {

@@ -65,6 +65,9 @@ export default function Register({ navigation }) {
     const onSubmit = async () => {
       if(isValidForm()){
         register(formValues)
+        if (isAuthenticated === true) {
+          navigation.navigate('Navigation')
+        }
       }
     };
 

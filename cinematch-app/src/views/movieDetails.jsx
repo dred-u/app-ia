@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useMovies } from '../moviesContext';
 import { useAuth } from '../authContext';
 import { useNavigation } from '@react-navigation/native';
-import RatingModal from '../components/movies-pages/ratingModal';
+import RatingModal from '../components/ratingModal';
 
 export default function MovieDetails({ route }) {
   const navigation = useNavigation();
@@ -50,8 +50,8 @@ export default function MovieDetails({ route }) {
       dir = await getDirectors(object.id_pelicula);
       prod = await getProducers(object.id_pelicula);
 
-      setGenre(gen && gen.length > 2 ? gen.slice(0, 2) : gen);
-      setProviders(prov && prov.length > 2 ? prov.slice(0, 2) : prov);
+      setGenre(gen);
+      setProviders(prov);
       setDirectors(dir && dir.length > 2 ? dir.slice(0, 2) : dir);
       setProducers(prod && prod.length > 2 ? prod.slice(0, 2) : prod);
       setLoading(false);

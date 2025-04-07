@@ -33,7 +33,7 @@ export const AuthProvider = ({children}) => {
         try {
             const res = await registerRequest(data);
             setUser(res.data.user);
-            setIsAuthenticated(true);
+            setIsAuthenticated(true);   
             await saveUserDataToStorage(res.data.token, res.data.user);
         }catch (error) {
             if(Array.isArray(error.response)){

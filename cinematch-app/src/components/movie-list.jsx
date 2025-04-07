@@ -9,13 +9,13 @@ export default function MovieList({ list, title }) {
         {title}
     </Text>
     <FlatList 
-
       horizontal // Configuración para hacer la lista horizontal
       data={list}
       renderItem={({ item }) => (
         <MoviePoster  object={item} title={item.title} genre={item.genre} imageURL={item.img} />
       )}
       keyExtractor={(item, index) => index.toString()}
+      removeClippedSubviews={true}
     />
     </View>
   );

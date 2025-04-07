@@ -48,7 +48,7 @@ function Navigation() {
   return (
     <Tab.Navigator
       initialRouteName="HomeScreen"
-      backBehavior='history'
+      backBehavior='firstRoute'
       screenOptions={{
         title: 'CINEMATCH',
         headerTitleAlign: 'center',

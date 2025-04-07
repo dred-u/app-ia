@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Modal, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RadioForm from 'react-native-simple-radio-button';
-import { useAuth } from '../../authContext';
-import { useMovies } from '../../moviesContext';
+import { useAuth } from '../authContext';
+import { useMovies } from '../moviesContext';
 
 const RatingModal = ({ isVisible, onClose, id }) => {
     const { user } = useAuth();
@@ -80,7 +80,7 @@ const RatingModal = ({ isVisible, onClose, id }) => {
                             onPress={(value) => { handlePress(value) }}
                         />
                         {isLoading ? (
-                            <ActivityIndicator size="large" color="#FEBC14" />
+                            <ActivityIndicator size="large" color="#FEBC14" style={{padding: 10}} />
                         ) : (
                             <Pressable onPress={sendRating} style={styles.sendButton}>
                                 <Text style={styles.buttonText}>Enviar</Text>

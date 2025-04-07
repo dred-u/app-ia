@@ -5,11 +5,12 @@ import {
     GetGenres, GetGenreMovies,
     GetDirectors, GetDirectorMovies,
     GetProducers, GetProducerMovies,
-    GetFavoriteMovies, GetFavoriteDirectors, GetFavoriteGenres, GetFavoriteProducers,
+    GetFavoriteMovies, GetFavoriteDirectors, GetFavoriteGenres, GetFavoriteProducers, GetFavoriteProviders,
     AddFavoriteGenres, AddFavoriteMovies, AddFavoriteDirectors,
     DelFavoriteGenres, DelFavoriteMovies, DelFavoriteDirectors,
     AddFavoriteProducers, DelFavoriteProducers,
-    AddReview, GetReview, GetRecomendationMovies, GetRecomendationGenres, GetRecomendationProviders
+    AddReview, GetReview, GetRecomendationMovies, GetRecomendationGenres, GetRecomendationProviders,
+    GetProviders, GetProvidersMovies, AddFavoriteProviders, DelFavoriteProviders
 } from "./services/moviesService";
 import { useAuth } from './authContext';
 
@@ -30,19 +31,21 @@ export const MoviesProvider = ({ children }) => {
     const [genres, setGenres] = useState(null);
     const [directors, setDirectors] = useState(null);
     const [producers, setProducers] = useState(null);
+    const [providers, setProviders] = useState(null);
     const [favoriteMovies, setFavoriteMovies] = useState(null);
     const [favoriteGenres, setFavoriteGenres] = useState(null);
     const [favoriteDirectors, setFavoriteDirectors] = useState(null);
     const [favoriteProducers, setFavoriteProducers] = useState(null);
+    const [favoriteProviders, setFavoriteProviders] = useState(null);
     const [movieRatings, setMovieRatings] = useState(null);
     const [movieLike, setMovieLike] = useState(false);
     const [genreLike, setGenreLike] = useState(false);
     const [directorLike, setDirectorLike] = useState(false);
     const [producerLike, setProducerLike] = useState(false);
+    const [providersLike, setProvidersLike] = useState(false);
     const [movieRecomendations, setMovieRecomendations] = useState(null);
     const [movieGenreRecomendations, setMovieGenreRecomendations] = useState(null);
     const [movieProvidersRecomendations, setMovieProvidersRecomendations] = useState(null);
-    const [name, setName] = useState(null);
 
     //PETICIONES PARA PELICULAS
     const getMovieList = async () => {
@@ -165,6 +168,25 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    //PETICIONES PARA PROVEDORES
+    const getProvidersList = async () => {
+        try {
+            const res = await GetProviders();
+            setProviders(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getProvMovies = async (id) => {
+        try {
+            const res = await GetProvidersMovies(id);
+            return res.data
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     //PETICIONES PARA FAVORITAS
     const getFavoriteMovieList = async (id) => {
         try {
@@ -218,6 +240,19 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const getFavoriteProvidersList = async (id) => {
+        try {
+            const res = await GetFavoriteProviders(id);
+            const providersArray = res.data.map(item => ({
+                id_fProvedores: item.id_fProvedores,
+                provedor: item.provedor
+            }));
+            setFavoriteProviders(providersArray);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const addFavMovie = async (datos) => {
         try {
             const res = await AddFavoriteMovies(datos);
@@ -248,6 +283,15 @@ export const MoviesProvider = ({ children }) => {
     const addFavProducer = async (datos) => {
         try {
             const res = await AddFavoriteProducers(datos);
+            return res
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const addFavProvider = async (datos) => {
+        try {
+            const res = await AddFavoriteProviders(datos);
             return res
         } catch (error) {
             console.log(error);
@@ -290,6 +334,15 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const delFavProvider = async (id) => {
+        try {
+            const res = await DelFavoriteProviders(id);
+            return res
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const getMovieRecomendations = async (id) => {
         try {
             const res = await GetRecomendationMovies(id);
@@ -308,9 +361,9 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
-    const getMovieProvidersRecomendations = async (id) => {
+    const getMovieProvidersRecomendations = async (id,idg) => {
         try {
-            const res = await GetRecomendationProviders(id);
+            const res = await GetRecomendationProviders(id, idg);
             setMovieProvidersRecomendations(res.data.recomendaciones)
         } catch (error) {
             console.log(error);
@@ -324,81 +377,88 @@ export const MoviesProvider = ({ children }) => {
             getGenreList()
             getDirectorList()
             getProducersList()
+            getProvidersList()
             getFavoriteMovieList(user.id)
             getFavoriteGenresList(user.id)
             getFavoriteDirectorsList(user.id)
             getFavoriteProducersList(user.id)
+            getFavoriteProvidersList(user.id)
             getMovieReview(user.id)
-            getMovieRecomendations(user.id)
-            getMovieProvidersRecomendations(user.id)
         }
     }, [isAuthenticated]);
-
-    useEffect(() => {
-        if (favoriteMovies && user){
-            getMovieRecomendations(user.id)
-        }
-        if (favoriteGenres && user) {
-            const randomIndex = Math.floor(Math.random() * favoriteGenres.length);
-            const randomGenre = favoriteGenres[randomIndex];
-            const randomGenreId = randomGenre.genero.id_genero;
-            const nameG = randomGenre.genero.nombre;
-            getMovieGenreRecomendations(user.id, randomGenreId);
-            setName(nameG)
-        }
-    }, [favoriteGenres, favoriteMovies]);
-
-
 
     return (
         <MoviesContext.Provider value={{
             getMovieList,
-            getGenres,
-            getDirectors,
-            getProducers,
-            getProviders,
-            getGenreList,
-            getGenMovies,
-            getDirectorList,
-            getDirMovies,
-            getProducersList,
-            getProdMovies,
-            movies,
-            genres,
-            directors,
-            producers,
-            getFavoriteMovieList,
-            getFavoriteGenresList,
-            getFavoriteDirectorsList,
-            getFavoriteProducersList,
-            favoriteMovies,
-            movieLike,
-            setMovieLike,
-            favoriteGenres,
-            genreLike,
-            setGenreLike,
-            favoriteDirectors,
-            directorLike,
-            setDirectorLike,
-            favoriteProducers,
-            producerLike,
-            setProducerLike,
-            addFavMovie,
-            addFavGenre,
-            addFavDirector,
-            addFavProducer,
-            delFavMovie,
-            delFavGenre,
-            delFavDirector,
-            delFavProducer,
-            AddMovieReview,
-            movieRatings,
-            getMovieRecomendations,
-            movieRecomendations,
-            getMovieGenreRecomendations,
-            movieGenreRecomendations,
-            name,
-            movieProvidersRecomendations
+        getGenres,
+        getDirectors,
+        getProducers,
+        getProviders,
+        getGenreList,
+        getGenMovies,
+        getDirectorList,
+        getDirMovies,
+        getProducersList,
+        getProdMovies,
+        getProvMovies,
+        movies,
+        genres,
+        directors,
+        producers,
+        providers,
+        getFavoriteMovieList,
+        getFavoriteGenresList,
+        getFavoriteDirectorsList,
+        getFavoriteProducersList,
+        getFavoriteProvidersList,
+        favoriteMovies,
+        movieLike,
+        setMovieLike,
+        favoriteGenres,
+        genreLike,
+        setGenreLike,
+        favoriteDirectors,
+        directorLike,
+        setDirectorLike,
+        favoriteProducers,
+        producerLike,
+        setProducerLike,
+        favoriteProviders,
+        providersLike,
+        setProvidersLike,
+        addFavMovie,
+        addFavGenre,
+        addFavDirector,
+        addFavProducer,
+        delFavMovie,
+        delFavGenre,
+        delFavDirector,
+        delFavProducer,
+        AddMovieReview,
+        addFavProvider,
+        delFavProvider,
+        movieRatings,
+        getMovieRecomendations,
+        movieRecomendations,
+        getMovieGenreRecomendations,
+        movieGenreRecomendations,
+        movieProvidersRecomendations,
+        getMovieProvidersRecomendations,
+
+        setMovies,
+        setGenres,
+        setDirectors,
+        setProducers,
+        setProviders,
+        setFavoriteMovies,
+        setFavoriteGenres,
+        setFavoriteDirectors,
+        setFavoriteProducers,
+        setFavoriteProviders,
+        setMovieRatings,
+        setMovieRecomendations,
+        setMovieGenreRecomendations,
+        setMovieProvidersRecomendations 
         }}>
             {children}
         </MoviesContext.Provider>

@@ -44,7 +44,7 @@ function Parallax({list}) {
             pagingEnabled={pagingEnabled}
             snapEnabled={snapEnabled}
             autoPlay={autoPlay}
-            autoPlayInterval={1500}
+            autoPlayInterval={2000}
             onProgressChange={(_, absoluteProgress) =>
                 (progressValue.value = absoluteProgress)
             }
@@ -53,9 +53,9 @@ function Parallax({list}) {
                 parallaxScrollingScale: 0.9,
                 parallaxScrollingOffset: 50,
             }}
-
+            removeClippedSubviews={true}
             data={list}
-            scrollAnimationDuration={1000}
+            scrollAnimationDuration={1500}
             renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item)} style={{flex: 1,  flexDirection: "row" }}>
                     <Image style={styles.img} source={{ uri: `https://image.tmdb.org/t/p/w600_and_h900_bestv2/${item.poster}` }} />
